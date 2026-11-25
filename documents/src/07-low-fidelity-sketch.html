@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zaka for Android — Low-Fidelity Sketch</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    .frame { fill: #fff; stroke: #5C5748; stroke-width: 1.6; }
+    .ph    { fill: #E4DFD5; }      /* placeholder text */
+    .ph-d  { fill: #B8B0A0; }      /* darker placeholder */
+    .rule  { stroke: #CFC6B4; stroke-width: 0.8; }
+    .lbl   { font: 700 8.5px "Helvetica Neue", sans-serif; fill: #1D1B16; }
+    .lbl-s { font: 7.5px "Helvetica Neue", sans-serif; fill: #5C5748; }
+    .cap   { font: 700 10px "Helvetica Neue", sans-serif; fill: #5C5748; }
+    .mark  { font: 700 8px "Helvetica Neue", sans-serif; fill: #fff; }
+    .stamp { font: 700 9px "Helvetica Neue", sans-serif; fill: #B45309; }
+    .callout { stroke: #B45309; stroke-width: 0.8; fill: none; }
+    ol.callouts { font-size: 9.5pt; padding-left: 8mm; }
+    ol.callouts li { margin-bottom: 1.5mm; }
+</style>
+</head>
+<body>
+
+<header class="cover">
+    <div class="project">Zaka for Android</div>
+    <h1>Low-Fidelity Sketch</h1>
+    <p class="subtitle">The four screens, before any of them was drawn in code</p>
+    <dl class="meta">
+        <div><dt>Document</dt><dd>LF v1.0</dd></div>
+        <div><dt>Date</dt><dd>25 November 2026</dd></div>
+        <div><dt>Screens</dt><dd>4</dd></div>
+        <div><dt>Fidelity</dt><dd>Layout only</dd></div>
+    </dl>
+</header>
+
+<h2>1. What these are and are not</h2>
+
+<p>Boxes and grey bars, deliberately. These sketches fix <em>what goes where</em>
+and nothing else — no colours, no type, no spacing, no final wording. Where a
+grey bar appears, the content is real but its exact words are not decided.</p>
+
+<p>Two things are worth noticing in all four. The <strong>month-to-date strip
+sits above the tab bar on every screen</strong>, because it is the one figure
+worth seeing while doing something else. And there is <strong>no top app
+bar</strong>: on a four-tab app with no navigation hierarchy it would cost a
+fifth of the screen to display a word the tab bar already shows.</p>
+
+<figure>
+<svg viewBox="0 0 700 545" role="img" aria-label="Wireframes of the Expenses list and the Add form">
+<defs>
+    <clipPath id="screen"><rect x="0" y="0" width="250" height="490" rx="22"/></clipPath>
+    <!-- an expense row: category mark, two lines of text, an amount -->
+    <g id="row">
+        <circle cx="32" cy="23" r="13" class="ph-d"/>
+        <rect x="54" y="14" width="96" height="7" rx="3.5" class="ph"/>
+        <rect x="54" y="26" width="58" height="6" rx="3" class="ph"/>
+        <rect x="176" y="18" width="58" height="8" rx="4" class="ph-d"/>
+        <line x1="0" y1="46" x2="250" y2="46" class="rule"/>
+    </g>
+    <!-- a category chip -->
+    <g id="chip">
+        <rect x="0" y="0" width="108" height="28" rx="14" fill="#fff" stroke="#CFC6B4" stroke-width="1"/>
+        <circle cx="16" cy="14" r="6" class="ph-d"/>
+        <rect x="28" y="11" width="62" height="6" rx="3" class="ph"/>
+    </g>
+    <!-- the four-tab bar -->
+    <g id="tabs">
+        <line x1="0" y1="0" x2="250" y2="0" class="rule"/>
+        <rect x="23" y="12" width="16" height="16" rx="3" fill="#7A5A12"/>
+        <rect x="16" y="33" width="30" height="4" rx="2" fill="#7A5A12"/>
+        <rect x="86" y="12" width="16" height="16" rx="3" class="ph-d"/>
+        <rect x="79" y="33" width="30" height="4" rx="2" class="ph"/>
+        <rect x="148" y="12" width="16" height="16" rx="3" class="ph-d"/>
+        <rect x="141" y="33" width="30" height="4" rx="2" class="ph"/>
+        <rect x="211" y="12" width="16" height="16" rx="3" class="ph-d"/>
+        <rect x="204" y="33" width="30" height="4" rx="2" class="ph"/>
+    </g>
+    <!-- the month-to-date strip -->
+    <g id="strip">
+        <rect x="0" y="0" width="250" height="28" fill="#F0EBE1"/>
+        <line x1="0" y1="0" x2="250" y2="0" class="rule"/>
+        <rect x="16" y="11" width="52" height="6" rx="3" class="ph-d"/>
+        <rect x="182" y="9" width="52" height="9" rx="4" class="ph-d"/>
+    </g>
+</defs>
+
+<!-- ================= SCREEN 1: EXPENSES ================= -->
+<text x="70" y="14" class="cap">1 — Expenses</text>
+<g transform="translate(70,24)">
+    <rect x="0" y="0" width="250" height="490" rx="22" class="frame"/>
+    <rect x="97" y="11" width="56" height="5" rx="2.5" class="ph-d"/>
+
+    <!-- day 1 -->
+    <text x="16" y="44" class="lbl">Today</text>
+    <rect x="186" y="37" width="48" height="8" rx="4" class="ph-d"/>
+    <line x1="0" y1="52" x2="250" y2="52" class="rule"/>
+    <use href="#row" x="0" y="56"/>
+    <use href="#row" x="0" y="102"/>
+
+    <!-- day 2 -->
+    <text x="16" y="170" class="lbl">Yesterday</text>
+    <rect x="186" y="163" width="48" height="8" rx="4" class="ph-d"/>
+    <line x1="0" y1="178" x2="250" y2="178" class="rule"/>
+    <use href="#row" x="0" y="182"/>
+
+    <!-- a row mid-swipe -->
+    <g transform="translate(0,228)" clip-path="url(#screen)">
+        <rect x="150" y="0" width="100" height="46" fill="#FADCE6"/>
+        <rect x="196" y="16" width="14" height="14" rx="2" fill="#B3246B"/>
+        <g transform="translate(-54,0)">
+            <circle cx="32" cy="23" r="13" class="ph-d"/>
+            <rect x="54" y="14" width="96" height="7" rx="3.5" class="ph"/>
+            <rect x="54" y="26" width="58" height="6" rx="3" class="ph"/>
+        </g>
+        <line x1="0" y1="46" x2="250" y2="46" class="rule"/>
+    </g>
+
+    <!-- day 3 -->
+    <text x="16" y="296" class="lbl">Fri 20 Nov</text>
+    <rect x="186" y="289" width="48" height="8" rx="4" class="ph-d"/>
+    <line x1="0" y1="304" x2="250" y2="304" class="rule"/>
+    <use href="#row" x="0" y="308"/>
+    <use href="#row" x="0" y="354"/>
+
+    <use href="#strip" x="0" y="420"/>
+    <use href="#tabs"  x="0" y="448"/>
+</g>
+
+<!-- callout markers, screen 1 -->
+<g>
+    <circle cx="334" cy="61" r="8" fill="#B45309"/><text x="334" y="64" class="mark" text-anchor="middle">1</text>
+    <line x1="326" y1="61" x2="300" y2="61" class="callout"/>
+    <circle cx="334" cy="110" r="8" fill="#B45309"/><text x="334" y="113" class="mark" text-anchor="middle">2</text>
+    <line x1="326" y1="110" x2="300" y2="100" class="callout"/>
+    <circle cx="334" cy="275" r="8" fill="#B45309"/><text x="334" y="278" class="mark" text-anchor="middle">3</text>
+    <line x1="326" y1="275" x2="300" y2="275" class="callout"/>
+    <circle cx="334" cy="455" r="8" fill="#B45309"/><text x="334" y="458" class="mark" text-anchor="middle">4</text>
+    <line x1="326" y1="455" x2="300" y2="455" class="callout"/>
+</g>
+
+<!-- ================= SCREEN 2: ADD ================= -->
+<text x="390" y="14" class="cap">2 — Add</text>
+<g transform="translate(390,24)">
+    <rect x="0" y="0" width="250" height="490" rx="22" class="frame"/>
+    <rect x="97" y="11" width="56" height="5" rx="2.5" class="ph-d"/>
+
+    <!-- amount -->
+    <rect x="16" y="40" width="218" height="58" rx="8" fill="#fff" stroke="#7A5A12" stroke-width="1.4"/>
+    <text x="26" y="36" class="lbl-s">Amount</text>
+    <text x="30" y="76" class="lbl" font-size="13">R</text>
+    <rect x="46" y="62" width="110" height="16" rx="4" class="ph-d"/>
+    <rect x="160" y="66" width="2" height="12" fill="#7A5A12"/>
+    <rect x="16" y="104" width="196" height="6" rx="3" class="ph"/>
+
+    <!-- date -->
+    <rect x="16" y="124" width="218" height="34" rx="8" fill="#fff" stroke="#CFC6B4" stroke-width="1"/>
+    <text x="28" y="145" class="lbl">Date</text>
+    <rect x="140" y="137" width="82" height="7" rx="3.5" class="ph-d"/>
+
+    <!-- note -->
+    <rect x="16" y="166" width="218" height="34" rx="8" fill="#fff" stroke="#CFC6B4" stroke-width="1"/>
+    <text x="28" y="187" class="lbl-s">Note</text>
+
+    <!-- categories -->
+    <text x="16" y="220" class="lbl">Category</text>
+    <g transform="translate(16,228)"><use href="#chip" x="0" y="0"/><use href="#chip" x="110" y="0"/></g>
+    <g transform="translate(16,262)">
+        <rect x="0" y="0" width="108" height="28" rx="14" fill="#FFDF9C" stroke="#7A5A12" stroke-width="1.4"/>
+        <circle cx="16" cy="14" r="6" fill="#7A5A12"/>
+        <rect x="28" y="11" width="62" height="6" rx="3" fill="#7A5A12" opacity="0.5"/>
+        <use href="#chip" x="110" y="0"/>
+    </g>
+    <g transform="translate(16,296)"><use href="#chip" x="0" y="0"/><use href="#chip" x="110" y="0"/></g>
+    <g transform="translate(16,330)"><use href="#chip" x="0" y="0"/><use href="#chip" x="110" y="0"/></g>
+    <rect x="100" y="366" width="50" height="5" rx="2.5" class="ph"/>
+
+    <!-- save -->
+    <rect x="16" y="382" width="218" height="36" rx="18" fill="#7A5A12"/>
+    <text x="125" y="405" class="mark" font-size="10" text-anchor="middle">Save</text>
+
+    <use href="#strip" x="0" y="420"/>
+    <use href="#tabs"  x="0" y="448"/>
+</g>
+
+<g>
+    <circle cx="658" cy="68" r="8" fill="#B45309"/><text x="658" y="71" class="mark" text-anchor="middle">5</text>
+    <line x1="650" y1="68" x2="626" y2="68" class="callout"/>
+    <circle cx="658" cy="132" r="8" fill="#B45309"/><text x="658" y="135" class="mark" text-anchor="middle">6</text>
+    <line x1="650" y1="132" x2="626" y2="145" class="callout"/>
+    <circle cx="658" cy="290" r="8" fill="#B45309"/><text x="658" y="293" class="mark" text-anchor="middle">7</text>
+    <line x1="650" y1="290" x2="626" y2="290" class="callout"/>
+    <circle cx="658" cy="406" r="8" fill="#B45309"/><text x="658" y="409" class="mark" text-anchor="middle">8</text>
+    <line x1="650" y1="406" x2="626" y2="406" class="callout"/>
+</g>
+</svg>
+</figure>
+
+<ol class="callouts">
+<li><strong>Day heading with its own total.</strong> Today and yesterday are named rather than dated. One announcement to a screen reader: "Today, R150.00".</li>
+<li><strong>One expense.</strong> Category mark, then the note — or the category name when there is no note — then the category, then the amount. The whole row is the tap target for editing.</li>
+<li><strong>Swipe right-to-left to delete.</strong> One direction only, because there is no undo. The same action is reachable without the gesture for screen-reader users.</li>
+<li><strong>Four tabs, with the month-to-date strip above them.</strong> Both are present on every screen.</li>
+<li><strong>The amount, given the most room on the screen.</strong> Focused on open with the decimal keypad already up, so logging an expense needs no preparatory tap. The hint beneath it explains that a comma and a full stop both work.</li>
+<li><strong>Date and note, deliberately small.</strong> Both are usually left alone: the date defaults to today and most expenses need no note.</li>
+<li><strong>Sixteen categories, two to a row.</strong> Two rather than four so each chip has room for its label beside its glyph — the grid must be readable without relying on colour.</li>
+<li><strong>One primary action,</strong> disabled until the amount is a number greater than zero.</li>
+</ol>
+
+<div class="page-break"></div>
+
+<figure>
+<svg viewBox="0 0 700 545" role="img" aria-label="Wireframes of the Insights screen and the Cards screen">
+<defs>
+    <g id="legendrow">
+        <circle cx="12" cy="10" r="8" class="ph-d"/>
+        <rect x="28" y="6" width="74" height="7" rx="3.5" class="ph"/>
+        <rect x="150" y="6" width="26" height="7" rx="3.5" class="ph"/>
+        <rect x="192" y="5" width="42" height="8" rx="4" class="ph-d"/>
+    </g>
+    <g id="tabs2">
+        <line x1="0" y1="0" x2="250" y2="0" class="rule"/>
+        <rect x="23" y="12" width="16" height="16" rx="3" class="ph-d"/>
+        <rect x="16" y="33" width="30" height="4" rx="2" class="ph"/>
+        <rect x="86" y="12" width="16" height="16" rx="3" class="ph-d"/>
+        <rect x="79" y="33" width="30" height="4" rx="2" class="ph"/>
+        <rect x="148" y="12" width="16" height="16" rx="3" fill="#7A5A12"/>
+        <rect x="141" y="33" width="30" height="4" rx="2" fill="#7A5A12"/>
+        <rect x="211" y="12" width="16" height="16" rx="3" class="ph-d"/>
+        <rect x="204" y="33" width="30" height="4" rx="2" class="ph"/>
+    </g>
+    <g id="strip2">
+        <rect x="0" y="0" width="250" height="28" fill="#F0EBE1"/>
+        <line x1="0" y1="0" x2="250" y2="0" class="rule"/>
+        <rect x="16" y="11" width="52" height="6" rx="3" class="ph-d"/>
+        <rect x="182" y="9" width="52" height="9" rx="4" class="ph-d"/>
+    </g>
+</defs>
+
+<!-- ================= SCREEN 3: INSIGHTS ================= -->
+<text x="70" y="14" class="cap">3 — Insights</text>
+<g transform="translate(70,24)">
+    <rect x="0" y="0" width="250" height="490" rx="22" class="frame"/>
+    <rect x="97" y="11" width="56" height="5" rx="2.5" class="ph-d"/>
+
+    <!-- month stepper -->
+    <path d="M30,40 l-8,7 l8,7" fill="none" stroke="#7A5A12" stroke-width="1.8"/>
+    <rect x="76" y="41" width="98" height="11" rx="5" class="ph-d"/>
+    <path d="M220,40 l8,7 l-8,7" fill="none" stroke="#CFC6B4" stroke-width="1.8"/>
+
+    <!-- totals -->
+    <rect x="68" y="74" width="114" height="20" rx="6" class="ph-d"/>
+    <rect x="88" y="102" width="74" height="7" rx="3.5" class="ph"/>
+
+    <!-- segmented control -->
+    <rect x="52" y="122" width="146" height="26" rx="13" fill="#fff" stroke="#CFC6B4" stroke-width="1"/>
+    <path d="M52,135 a13,13 0 0 1 13,-13 h60 v26 h-60 a13,13 0 0 1 -13,-13 z" fill="#FFDF9C"/>
+    <line x1="125" y1="122" x2="125" y2="148" class="rule"/>
+    <rect x="72" y="132" width="36" height="6" rx="3" fill="#7A5A12" opacity="0.6"/>
+    <rect x="140" y="132" width="36" height="6" rx="3" class="ph"/>
+
+    <!-- donut -->
+    <g transform="translate(125,232)">
+        <circle cx="0" cy="0" r="58" fill="none" stroke="#E4DFD5" stroke-width="24"/>
+        <circle cx="0" cy="0" r="58" fill="none" stroke="#7A5A12" stroke-width="24"
+                stroke-dasharray="135 230" transform="rotate(-90)"/>
+        <circle cx="0" cy="0" r="58" fill="none" stroke="#0E7490" stroke-width="24"
+                stroke-dasharray="73 292" transform="rotate(43.4)"/>
+        <circle cx="0" cy="0" r="58" fill="none" stroke="#B3246B" stroke-width="24"
+                stroke-dasharray="44 321" transform="rotate(115.5)"/>
+        <circle cx="0" cy="0" r="58" fill="none" stroke="#10684F" stroke-width="24"
+                stroke-dasharray="29 336" transform="rotate(159)"/>
+        <circle cx="0" cy="0" r="58" fill="none" stroke="#B8B0A0" stroke-width="24"
+                stroke-dasharray="83 282" transform="rotate(187.7)"/>
+        <rect x="-32" y="-7" width="64" height="14" rx="5" class="ph-d"/>
+    </g>
+
+    <!-- legend -->
+    <g transform="translate(8,300)">
+        <use href="#legendrow" x="0" y="0"/>
+        <use href="#legendrow" x="0" y="24"/>
+        <use href="#legendrow" x="0" y="48"/>
+        <use href="#legendrow" x="0" y="72"/>
+        <g transform="translate(0,96)">
+            <circle cx="12" cy="10" r="8" fill="#B8B0A0"/>
+            <rect x="28" y="6" width="50" height="7" rx="3.5" class="ph"/>
+            <text x="84" y="13" class="lbl-s">+3 more</text>
+            <rect x="150" y="6" width="26" height="7" rx="3.5" class="ph"/>
+            <rect x="192" y="5" width="42" height="8" rx="4" class="ph-d"/>
+        </g>
+    </g>
+
+    <use href="#strip2" x="0" y="420"/>
+    <use href="#tabs2"  x="0" y="448"/>
+</g>
+
+<g>
+    <circle cx="334" cy="71" r="8" fill="#B45309"/><text x="334" y="74" class="mark" text-anchor="middle">9</text>
+    <line x1="326" y1="71" x2="300" y2="71" class="callout"/>
+    <circle cx="334" cy="130" r="8" fill="#B45309"/><text x="334" y="133" class="mark" text-anchor="middle">10</text>
+    <line x1="326" y1="130" x2="300" y2="130" class="callout"/>
+    <circle cx="334" cy="170" r="8" fill="#B45309"/><text x="334" y="173" class="mark" text-anchor="middle">11</text>
+    <line x1="326" y1="170" x2="300" y2="162" class="callout"/>
+    <circle cx="334" cy="440" r="8" fill="#B45309"/><text x="334" y="443" class="mark" text-anchor="middle">12</text>
+    <line x1="326" y1="440" x2="300" y2="440" class="callout"/>
+</g>
+
+<!-- ================= SCREEN 4: CARDS ================= -->
+<text x="390" y="14" class="cap">4 — Cards <tspan class="stamp">· sprint 3</tspan></text>
+<g transform="translate(390,24)">
+    <rect x="0" y="0" width="250" height="490" rx="22" class="frame" stroke-dasharray="7 4"/>
+    <rect x="97" y="11" width="56" height="5" rx="2.5" class="ph-d"/>
+
+    <!-- card tiles -->
+    <g transform="translate(16,40)">
+        <rect x="0" y="0" width="218" height="56" rx="10" fill="#fff" stroke="#CFC6B4" stroke-width="1"/>
+        <rect x="0" y="0" width="10" height="56" rx="5" fill="#0F8E6F"/>
+        <rect x="24" y="16" width="86" height="8" rx="4" class="ph-d"/>
+        <rect x="24" y="32" width="56" height="6" rx="3" class="ph"/>
+        <rect x="160" y="22" width="44" height="14" rx="3" class="ph"/>
+    </g>
+    <g transform="translate(16,106)">
+        <rect x="0" y="0" width="218" height="56" rx="10" fill="#fff" stroke="#CFC6B4" stroke-width="1"/>
+        <rect x="0" y="0" width="10" height="56" rx="5" fill="#1E64B4"/>
+        <rect x="24" y="16" width="70" height="8" rx="4" class="ph-d"/>
+        <rect x="24" y="32" width="56" height="6" rx="3" class="ph"/>
+        <rect x="160" y="22" width="44" height="14" rx="3" class="ph"/>
+    </g>
+    <g transform="translate(16,172)">
+        <rect x="0" y="0" width="218" height="56" rx="10" fill="#fff" stroke="#CFC6B4" stroke-width="1"/>
+        <rect x="0" y="0" width="10" height="56" rx="5" fill="#B3246B"/>
+        <rect x="24" y="16" width="94" height="8" rx="4" class="ph-d"/>
+        <rect x="24" y="32" width="56" height="6" rx="3" class="ph"/>
+        <rect x="160" y="22" width="44" height="14" rx="3" class="ph"/>
+    </g>
+
+    <!-- add a card -->
+    <g transform="translate(16,242)">
+        <rect x="0" y="0" width="218" height="40" rx="10" fill="#fff" stroke="#CFC6B4" stroke-width="1" stroke-dasharray="4 3"/>
+        <circle cx="26" cy="20" r="10" fill="none" stroke="#7A5A12" stroke-width="1.4"/>
+        <line x1="26" y1="15" x2="26" y2="25" stroke="#7A5A12" stroke-width="1.4"/>
+        <line x1="21" y1="20" x2="31" y2="20" stroke="#7A5A12" stroke-width="1.4"/>
+        <rect x="46" y="17" width="76" height="6" rx="3" class="ph-d"/>
+    </g>
+
+    <!-- full-screen code, shown as an inset -->
+    <g transform="translate(40,300)">
+        <rect x="0" y="0" width="170" height="104" rx="8" fill="#FBF8F3" stroke="#5C5748" stroke-width="1"/>
+        <text x="85" y="16" class="lbl-s" text-anchor="middle">tap a card →</text>
+        <g transform="translate(16,26)">
+            <rect x="0" y="0" width="2.5" height="40" fill="#1D1B16"/><rect x="5" y="0" width="1.5" height="40" fill="#1D1B16"/>
+            <rect x="10" y="0" width="4" height="40" fill="#1D1B16"/><rect x="17" y="0" width="1.5" height="40" fill="#1D1B16"/>
+            <rect x="22" y="0" width="2.5" height="40" fill="#1D1B16"/><rect x="28" y="0" width="4" height="40" fill="#1D1B16"/>
+            <rect x="35" y="0" width="1.5" height="40" fill="#1D1B16"/><rect x="40" y="0" width="2.5" height="40" fill="#1D1B16"/>
+            <rect x="46" y="0" width="1.5" height="40" fill="#1D1B16"/><rect x="51" y="0" width="4" height="40" fill="#1D1B16"/>
+            <rect x="58" y="0" width="2.5" height="40" fill="#1D1B16"/><rect x="64" y="0" width="1.5" height="40" fill="#1D1B16"/>
+            <rect x="69" y="0" width="4" height="40" fill="#1D1B16"/><rect x="76" y="0" width="2.5" height="40" fill="#1D1B16"/>
+            <rect x="82" y="0" width="1.5" height="40" fill="#1D1B16"/><rect x="87" y="0" width="4" height="40" fill="#1D1B16"/>
+            <rect x="94" y="0" width="1.5" height="40" fill="#1D1B16"/><rect x="99" y="0" width="2.5" height="40" fill="#1D1B16"/>
+            <rect x="105" y="0" width="4" height="40" fill="#1D1B16"/><rect x="112" y="0" width="1.5" height="40" fill="#1D1B16"/>
+            <rect x="117" y="0" width="2.5" height="40" fill="#1D1B16"/><rect x="123" y="0" width="4" height="40" fill="#1D1B16"/>
+            <rect x="130" y="0" width="1.5" height="40" fill="#1D1B16"/><rect x="135" y="0" width="2.5" height="40" fill="#1D1B16"/>
+        </g>
+        <rect x="52" y="76" width="66" height="7" rx="3.5" class="ph-d"/>
+        <text x="85" y="97" class="lbl-s" text-anchor="middle">brightness to full</text>
+    </g>
+
+    <use href="#strip2" x="0" y="420"/>
+    <g transform="translate(0,448)">
+        <line x1="0" y1="0" x2="250" y2="0" class="rule"/>
+        <rect x="23" y="12" width="16" height="16" rx="3" class="ph-d"/><rect x="16" y="33" width="30" height="4" rx="2" class="ph"/>
+        <rect x="86" y="12" width="16" height="16" rx="3" class="ph-d"/><rect x="79" y="33" width="30" height="4" rx="2" class="ph"/>
+        <rect x="148" y="12" width="16" height="16" rx="3" class="ph-d"/><rect x="141" y="33" width="30" height="4" rx="2" class="ph"/>
+        <rect x="211" y="12" width="16" height="16" rx="3" fill="#7A5A12"/><rect x="204" y="33" width="30" height="4" rx="2" fill="#7A5A12"/>
+    </g>
+</g>
+
+<g>
+    <circle cx="658" cy="70" r="8" fill="#B45309"/><text x="658" y="73" class="mark" text-anchor="middle">13</text>
+    <line x1="650" y1="70" x2="626" y2="70" class="callout"/>
+    <circle cx="658" cy="286" r="8" fill="#B45309"/><text x="658" y="289" class="mark" text-anchor="middle">14</text>
+    <line x1="650" y1="286" x2="626" y2="286" class="callout"/>
+    <circle cx="658" cy="370" r="8" fill="#B45309"/><text x="658" y="373" class="mark" text-anchor="middle">15</text>
+    <line x1="650" y1="370" x2="626" y2="370" class="callout"/>
+</g>
+</svg>
+</figure>
+
+<ol class="callouts" start="9">
+<li><strong>Month stepper.</strong> Back is always available; forward is greyed at the current month, because there is nothing ahead of it.</li>
+<li><strong>The total, then the daily rate underneath.</strong> The rate divides by the days elapsed, so mid-month it reads as a rate rather than as an artificially low figure.</li>
+<li><strong>Donut or bars,</strong> remembered between launches.</li>
+<li><strong>At most six slices.</strong> The smallest are merged into "+N more" with the total preserved. The legend names every slice with its share and amount, so two similar colours are never the only way to tell them apart.</li>
+<li><strong>A card tile</strong> shows the shop and the last four digits — never the whole number on a list that might be read over a shoulder.</li>
+<li><strong>Adding a card</strong> is a row at the end of the list rather than a floating button, which keeps the gesture the same as everywhere else in the app.</li>
+<li><strong>Tapping a card</strong> fills the screen with the code and raises brightness, because till scanners struggle with a dim screen. Below it, the number in text, for when the scanner gives up and the cashier types it.</li>
+</ol>
+
+<h2>2. What these sketches decided</h2>
+
+<table>
+<thead><tr><th>Question</th><th>Answer, and why</th></tr></thead>
+<tbody>
+<tr><td>Where does the month total live?</td><td>Above the tab bar, on every screen. It is the figure the app exists to keep in front of you, and it belongs to no single screen.</td></tr>
+<tr><td>Is there a top app bar?</td><td>No. Four tabs, no hierarchy, nothing to title — it would cost a fifth of the screen to repeat a word the tab bar already shows.</td></tr>
+<tr><td>Is Add a tab or a floating button?</td><td>A tab, as on iOS. It is the most frequent action and it deserves a fixed, predictable place rather than a button that floats over content.</td></tr>
+<tr><td>How wide are the category chips?</td><td>Two to a row, so every chip fits its label beside its glyph. Four to a row would have forced icon-only chips and made the grid unreadable to anyone who does not know the icons.</td></tr>
+<tr><td>How is deleting done?</td><td>A swipe in one direction, plus an equivalent action that needs no gesture. One direction because there is no undo.</td></tr>
+<tr><td>Where does editing happen?</td><td>In the same form as adding, opened over the tabs. One screen, one set of rules.</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+    <span class="label">Honest sequencing</span>
+    <p>These sketches were drawn after the screens were built, from the layouts
+    as implemented — the project went straight from an existing iOS app to
+    Compose without wireframing first. That is recorded as a gap in the
+    lifecycle documentation rather than disguised here: the risk of skipping
+    this step is a translated iOS layout instead of an Android one, and the
+    decisions table above is where that was checked after the fact.</p>
+</div>
+
+<footer class="doc">
+    Zaka for Android — Low-Fidelity Sketch v1.0 · 25 November 2026 ·
+    github.com/Jabulile1704/Zaka-Android
+</footer>
+
+</body>
+</html>
