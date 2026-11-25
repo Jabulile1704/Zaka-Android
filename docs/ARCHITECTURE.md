@@ -14,7 +14,7 @@ ViewModels and Room each have an opinion about where state lives.
         │  :app   Android, Compose, Room           │
         │                                          │
         │  ui/        screens, theme, components   │
-        │  data/      Room entities, DAOs, mappers │  (sprint 2)
+        │  data/      Room entities, DAOs, mappers │
         └───────────────────┬──────────────────────┘
                             │  depends on
                             ▼
@@ -45,14 +45,14 @@ This mirrors the iOS split, where a Swift package held the same pure logic so
 | --- | --- | --- |
 | A rule about money, dates, barcodes or grouping | `:core` | `:core:test` |
 | A record the app reasons about | `:core` | `:core:test` |
-| A Room entity, DAO or mapper | `:app/data` | instrumented test |
+| A Room entity, DAO or mapper | `:app/data` | `:app:testDebugUnitTest`, Robolectric |
 | A screen, a component, the theme | `:app/ui` | Compose UI test |
 | A state holder for one screen | `:app/ui`, as a ViewModel | `:app:testDebugUnitTest` |
 
 If a rule is hard to test because it needs a `Context`, that is usually a
 sign the rule belongs in `:core` and only its *input* needs Android.
 
-## Layers inside `:app` (sprint 2 onward)
+## Layers inside `:app`
 
 ```
 Composable  ──reads──▶  UiState (immutable)
@@ -77,6 +77,10 @@ Four rules, decided now so sprint 2 does not have to argue about them:
    `core.Expense`. It costs a mapper and it buys the thing that saved the iOS
    app twice: the database column stays a string, so renaming or retiring a
    category cannot re-map rows that are already saved.
+
+The repositories are where rules 2 and 4 meet. `ExpenseRepository.observeDays()`
+returns `Flow<List<DayGroup>>` — already bucketed, already totalled — rather
+than rows for a composable to fold on every recomposition.
 
 ## What the categories are, and are not
 

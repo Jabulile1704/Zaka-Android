@@ -165,3 +165,51 @@ hand.
 
 Nothing else in the app is worth restoring, and nothing in it is a secret:
 loyalty cards only, never payment cards.
+
+### The database is tested with Robolectric, not an emulator
+
+[#4](../../issues/4)
+
+The store tests assert things about SQL and about mapping — that a retired
+category is read through its replacement without the row being rewritten, that
+a month's boundary falls at local midnight, that saving a record with an id
+updates it instead of adding another. None of that is about a device.
+
+Robolectric runs the real Room database in memory on the JVM, so those
+assertions live in `:app:testDebugUnitTest` and take seconds. An emulator job
+would turn the same suite into a five-minute one and tell us nothing more. It
+is pinned to `sdk=34` in `app/src/test/resources/robolectric.properties`
+rather than following `targetSdk`, because Robolectric only emulates the API
+levels it ships images for.
+
+Instrumented tests are still the right place for what actually needs a device,
+which starts with the camera scanner ([#9](../../issues/9)).
+
+### Dates are stored as epoch milliseconds
+
+A plain `INTEGER` column sorts correctly in SQL, needs no `@TypeConverter`,
+and lets the month query be a `WHERE date >= ? AND date < ?` that an index can
+serve. An ISO string would sort correctly too and be four times the size; a
+Room converter for `Instant` would add a layer for no gain.
+
+The half-open range matters more than the storage: `MonthWindow` in `:core`
+turns a `YearMonth` into `[start, endExclusive)` at local midnight, so nobody
+has to reason about whether the last millisecond of the month is included.
+
+### `exportSchema` is off at version 1
+
+A schema JSON exists to validate migrations against. There are no migrations
+yet, and an exported schema that nobody has committed is worse than none at
+all — it looks like a record and is not one.
+
+Turn it on with the first migration, through the Room Gradle plugin rather
+than the bare `room.schemaLocation` processor argument, which does not play
+well with Gradle's configuration cache.
+
+### Every ordering has a tiebreak
+
+`ORDER BY date DESC, id DESC`, never `ORDER BY date DESC` alone. Two expenses
+logged in the same millisecond — which the add form makes easy, since the date
+defaults to now — would otherwise come back in whatever order SQLite felt like,
+and the list would reshuffle between recompositions. The same bug as the chart
+slices that sorted by dictionary order on iOS.
