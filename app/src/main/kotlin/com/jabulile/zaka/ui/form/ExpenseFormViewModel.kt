@@ -26,13 +26,15 @@ data class ExpenseFormUiState(
     val note: String = "",
     val editing: Boolean = false,
     val loaded: Boolean = false,
+    /** A save is in flight, so the button is spent. */
+    val saving: Boolean = false,
     /** Set once the form has done its job and the caller should close it. */
     val finished: Boolean = false,
 ) {
     /** Null while what has been typed is not yet a number. */
     val amount: Double? get() = Money.parse(amountText)
 
-    val canSave: Boolean get() = (amount ?: 0.0) > 0.0
+    val canSave: Boolean get() = !saving && (amount ?: 0.0) > 0.0
 }
 
 /**
@@ -95,10 +97,20 @@ class ExpenseFormViewModel(
 
     fun noteChanged(note: String) = _state.update { it.copy(note = note) }
 
+    /**
+     * Saves once, however many times the button is pressed.
+     *
+     * Without the claim below, a double tap - easy on this screen, where the
+     * button sits under the thumb with the keypad up - launched two
+     * coroutines, both of which read an id of zero and inserted. The result
+     * was two identical expenses. `compareAndSet` makes claiming the save
+     * atomic rather than a check followed by a write.
+     */
     fun save() {
         val current = _state.value
         val amount = current.amount ?: return
-        if (amount <= 0) return
+        if (amount <= 0 || current.saving) return
+        if (!_state.compareAndSet(current, current.copy(saving = true))) return
 
         viewModelScope.launch {
             expenses.save(
@@ -110,7 +122,7 @@ class ExpenseFormViewModel(
                     note = current.note.trim(),
                 ),
             )
-            _state.update { it.copy(finished = true) }
+            _state.update { it.copy(saving = false, finished = true) }
         }
     }
 
