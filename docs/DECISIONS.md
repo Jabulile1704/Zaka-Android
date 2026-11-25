@@ -213,3 +213,55 @@ logged in the same millisecond — which the add form makes easy, since the date
 defaults to now — would otherwise come back in whatever order SQLite felt like,
 and the list would reshuffle between recompositions. The same bug as the chart
 slices that sorted by dictionary order on iOS.
+
+### No navigation library
+
+[#5](../../issues/5)
+
+`ZakaApp` holds the selected tab in `rememberSaveable` and switches on it.
+That is the whole of navigation.
+
+Four destinations, no deep links, no third level of screen, and one modal form
+still to come. A `NavHost` would buy a back stack this app has nothing to put
+on, and type-safe routes would pull in the serialization plugin to describe
+four constants. `rememberSaveable` already survives rotation and process
+death, which was the only real requirement.
+
+The moment there is a deep link, a second level under a tab, or a screen worth
+restoring by URL, this becomes Navigation Compose and the tab enum becomes its
+start destinations. Until then it would be ceremony.
+
+### Icons come from `material-icons-extended`, pinned at 1.7.8 by the BOM
+
+Compose stopped publishing new versions of the icon artifacts after 1.7.8, and
+Material Symbols are not shipped as a Compose library at all. The Compose BOM
+still manages `material-icons-extended`, so that frozen version is the
+sanctioned way to get the glyphs — and sixteen categories need sixteen
+distinguishable ones.
+
+The alternative was sixteen hand-written vector drawables, which on a machine
+that cannot render them would be sixteen guesses.
+
+`ZakaIcons` is the only file that names an icon, and
+`ExpenseCategory.iconName` in `:core` still records which Material Symbol each
+category *wants*. Replacing the set later is a change to one file.
+
+R8 strips the icons the app does not reference, so the frozen artifact costs
+release size nothing; the debug APK carries the lot.
+
+### The month-to-date total belongs to the shell, not to a screen
+
+The iOS app keeps it in the tab bar's bottom accessory, visible from every
+tab, and that is the right call: it is the one number worth seeing while you
+are doing something else. So it lives in `ZakaApp` above the `NavigationBar`,
+reading the same `ExpensesViewModel` state the list reads.
+
+It also means the total is announced as one thing — "This month, R8,568" —
+rather than as a label and a number a screen reader has to join up.
+
+### Rows delete in one direction only
+
+`enableDismissFromStartToEnd = false`. A row that deletes whichever way it is
+pushed is too easy to lose an expense to, and there is no undo yet. Swiping
+the other way does nothing, which is a cheap way of making the gesture
+deliberate.
