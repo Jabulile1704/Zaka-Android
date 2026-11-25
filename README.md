@@ -51,7 +51,7 @@ Tests:
 ./gradlew :app:testDebugUnitTest
 ```
 
-You need **JDK 17 or newer** and an Android SDK with **API 37**. Android
+You need **JDK 17 or newer** and an Android SDK with **API 37.1**. Android
 Studio installs both. `minSdk` is 26 (Android 8.0).
 
 ## Layout

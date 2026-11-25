@@ -120,15 +120,23 @@ is **not compatible** with the new DSL — applying it fails the build with
 `:core` still applies `org.jetbrains.kotlin.jvm`, which is unaffected: it is
 not an Android module.
 
-### `minSdk` 26, `compileSdk` 37
+### `minSdk` 26, `compileSdk` 37.1
 
 API 26 is Android 8.0, which covers effectively every phone still in use in
 South Africa and is the floor for adaptive icons and `java.time` without
 desugaring — and `java.time` is what `DayGroup` is built on.
 
-API 37 is the highest AGP 9.5 supports. CI installs `platforms;android-37.0`
-explicitly rather than trusting the runner image to ship it, so a missing
-platform fails as a missing platform and not as a mysterious build error.
+API 37 is the highest major AGP 9.5 supports, and the minor is not cosmetic:
+Compose 1.13 declares that anything consuming it must compile against 37.1 or
+newer, so `compileSdk = 37` alone fails the build at `checkDebugAarMetadata`.
+Hence `compileSdkMinor = 1`.
+
+`targetSdk` stays at 37. Raising what the app compiles against is a separate
+decision from opting in to a release's runtime behaviour.
+
+CI installs `platforms;android-37.1` explicitly rather than trusting the
+runner image to ship it, so a missing platform fails as a missing platform
+and not as a mysterious build error.
 
 ### CI builds the release variant as well as debug
 

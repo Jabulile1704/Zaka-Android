@@ -5,7 +5,11 @@ plugins {
 
 android {
     namespace = "com.jabulile.zaka"
+
+    // Compose 1.13 refuses to be consumed by anything compiled against less
+    // than 37.1, so the minor matters here and is not cosmetic.
     compileSdk = 37
+    compileSdkMinor = 1
 
     defaultConfig {
         applicationId = "com.jabulile.zaka"

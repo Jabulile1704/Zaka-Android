@@ -21,7 +21,7 @@ The logic job needs no Android SDK at all — `:core` is a plain JVM module —
 which is why it is the fast one and the one that says whether a port is
 faithful.
 
-The app job installs `platforms;android-37.0` and `build-tools;36.0.0`
+The app job installs `platforms;android-37.1` and `build-tools;36.0.0`
 explicitly instead of trusting whatever the runner image happens to ship.
 Both jobs print their toolchain first, so a runner image refresh fails
 visibly rather than mysteriously.
@@ -45,7 +45,8 @@ except Gradle itself, which is in the wrapper.
 | Kotlin | 2.4.21 | `libs.versions.toml` |
 | Compose BOM | 2026.11.01 | `libs.versions.toml` |
 | JDK | 21 in CI, 17 minimum | `ci.yml`, `compileOptions` |
-| compileSdk / targetSdk | 37 | `app/build.gradle.kts` |
+| compileSdk | 37.1 — Compose 1.13 requires it | `app/build.gradle.kts` |
+| targetSdk | 37 | `app/build.gradle.kts` |
 | minSdk | 26 | `app/build.gradle.kts` |
 
 AGP 9 enables built-in Kotlin, so there is no `kotlin-android` plugin to keep
