@@ -7,13 +7,16 @@ import com.jabulile.zaka.core.Expense
 import com.jabulile.zaka.core.ExpenseCategory
 import com.jabulile.zaka.data.ExpenseRepository
 import com.jabulile.zaka.data.ZakaDatabase
+import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -36,6 +39,7 @@ class ExpensesViewModelTest {
     private lateinit var database: ZakaDatabase
     private lateinit var repository: ExpenseRepository
     private lateinit var viewModel: ExpensesViewModel
+    private lateinit var clock: MovableClock
 
     @Before
     fun setUp() {
@@ -45,7 +49,8 @@ class ExpensesViewModelTest {
             ZakaDatabase::class.java,
         ).allowMainThreadQueries().build()
         repository = ExpenseRepository(database.expenses(), zone)
-        viewModel = ExpensesViewModel(repository, zone)
+        clock = MovableClock(Instant.now(), zone)
+        viewModel = ExpensesViewModel(repository, zone, clock)
     }
 
     @After
@@ -87,10 +92,51 @@ class ExpensesViewModelTest {
         )
     }
 
+    @Test
+    fun `the month total follows the calendar, not the view model's birthday`() = runTest {
+        // This view model's scope must share the test's scheduler, so that
+        // advancing virtual time below actually times the sharing out.
+        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
+
+        val november = LocalDate.of(2026, 11, 20).atTime(12, 0).atZone(zone).toInstant()
+        val december = LocalDate.of(2026, 12, 2).atTime(12, 0).atZone(zone).toInstant()
+        clock.now = LocalDate.of(2026, 11, 30).atTime(23, 59).atZone(zone).toInstant()
+
+        repository.save(expense(100.0, ExpenseCategory.RENT, november))
+        repository.save(expense(40.0, ExpenseCategory.WIFI, december))
+
+        val model = ExpensesViewModel(repository, zone, clock)
+        assertEquals(100.0, model.state.filter { it.loaded }.first().monthTotal, 1e-9)
+
+        // Let the sharing time out, as it does when the screen stops being
+        // observed, then push the clock over midnight and look again.
+        advanceTimeBy(6_000)
+        clock.now = LocalDate.of(2026, 12, 1).atTime(0, 1).atZone(zone).toInstant()
+
+        val rolled = model.state.filter { it.monthTotal == 40.0 }.first()
+        assertEquals(
+            "the day headings follow the same read",
+            LocalDate.of(2026, 12, 1),
+            rolled.today,
+        )
+    }
+
     private fun expense(amount: Double, category: ExpenseCategory) = Expense(
         amount = amount,
         category = category,
         // Now, because the month total only counts the current month.
         date = Instant.now(),
     )
+
+    private fun expense(amount: Double, category: ExpenseCategory, at: Instant) =
+        Expense(amount = amount, category = category, date = at)
+
+    /** A clock the test can push over midnight. */
+    private class MovableClock(var now: Instant, private val where: ZoneId) : Clock() {
+        override fun getZone(): ZoneId = where
+
+        override fun withZone(other: ZoneId): Clock = MovableClock(now, other)
+
+        override fun instant(): Instant = now
+    }
 }
