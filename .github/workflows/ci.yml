@@ -82,3 +82,36 @@ jobs:
             app/build/reports
             app/build/outputs/logs
           retention-days: 7
+
+  lint:
+    name: Android lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: android-actions/setup-android@v4
+        with:
+          packages: 'platforms;android-37.1 build-tools;36.0.0'
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      # Lint has little to say about Compose semantics - its accessibility
+      # checks are written for Views - so this is the belt and the semantics
+      # tests in the unit suite are the braces.
+      - name: Lint
+        run: ./gradlew :app:lintDebug
+
+      - name: Keep the lint report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lint-report
+          path: |
+            app/build/reports/lint-results-debug.html
+            app/build/reports/lint-results-debug.txt
+          retention-days: 7

@@ -23,8 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jabulile.zaka.R
@@ -81,6 +85,7 @@ private fun DayHeading(
             .padding(horizontal = 16.dp, vertical = 12.dp)
             // One announcement for the heading, not two unrelated fragments.
             .clearAndSetSemantics {
+                heading()
                 contentDescription = "$title, ${Money.string(day.total)}"
             },
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -108,6 +113,7 @@ private fun ExpenseRow(
     modifier: Modifier = Modifier,
 ) {
     val swipe = rememberSwipeToDismissBoxState()
+    val deleteLabel = stringResource(R.string.expense_delete_action)
 
     SwipeToDismissBox(
         state = swipe,
@@ -122,10 +128,19 @@ private fun ExpenseRow(
         backgroundContent = { DeleteBackground() },
     ) {
         ListItem(
-            modifier = Modifier.clickable(
-                onClickLabel = stringResource(R.string.expense_edit_action),
-                onClick = onEdit,
-            ),
+            modifier = Modifier
+                .clickable(
+                    onClickLabel = stringResource(R.string.expense_edit_action),
+                    onClick = onEdit,
+                )
+                .semantics {
+                    customActions = listOf(
+                        CustomAccessibilityAction(deleteLabel) {
+                            onDelete()
+                            true
+                        },
+                    )
+                },
             headlineContent = { Text(expense.title) },
             supportingContent = { Text(expense.category.label) },
             leadingContent = { CategoryMark(category = expense.category) },

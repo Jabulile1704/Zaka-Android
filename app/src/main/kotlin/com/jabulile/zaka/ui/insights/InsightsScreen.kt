@@ -39,6 +39,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.jabulile.zaka.R
 import com.jabulile.zaka.core.Money
@@ -127,6 +129,7 @@ private fun MonthStepper(
         Text(
             text = month.format(formatter),
             style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.semantics { heading() },
         )
         IconButton(onClick = onNext, enabled = canGoForward) {
             Icon(

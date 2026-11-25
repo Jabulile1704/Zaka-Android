@@ -359,3 +359,30 @@ to the bars, to the day headings in the list, and to the month strip.
 
 This is accessibility as a consequence of how the screen is built rather than
 something to retrofit, which is what [#14](../../issues/14) is for.
+
+### Swiping to delete has an accessible twin
+
+[#14](../../issues/14)
+
+A swipe gesture does not exist for someone using TalkBack, so every expense
+row carries a `CustomAccessibilityAction` labelled "Delete this expense" that
+calls exactly the same lambda. A test invokes the action and asserts the
+deletion, so the two cannot drift apart.
+
+This is the gap that a lint run would never have found, and the reason
+accessibility belongs in the screen that creates it rather than in a pass at
+the end.
+
+### Compose tests run under Robolectric, not on an emulator
+
+`createComposeRule()` works in the unit suite, which means the semantics a
+screen reader is handed can be asserted in seconds: that a day heading is one
+announcement and carries `heading()`, that a breakdown row reads "Groceries,
+75%, R150.00" rather than as four fragments, that the month arrows are not
+unlabelled icons.
+
+Android lint is the belt and these are the braces — and the braces do more of
+the work, because lint's accessibility checks are written for Views.
+
+An emulator job still waits for what genuinely needs a device: the camera
+scanner ([#9](../../issues/9)).
