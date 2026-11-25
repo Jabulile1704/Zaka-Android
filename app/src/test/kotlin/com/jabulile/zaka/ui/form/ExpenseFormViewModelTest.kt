@@ -14,7 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -187,6 +189,28 @@ class ExpenseFormViewModelTest {
         assertEquals("", form.state.value.amountText)
         assertEquals("", form.state.value.note)
         assertFalse(form.state.value.finished)
+    }
+
+    @Test
+    fun `a double tap on Save inserts one expense, not two`() = runTest {
+        // A dispatcher that queues rather than running eagerly, so the second
+        // press lands while the first save is still in flight - which is the
+        // whole of the bug.
+        Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+
+        val form = adding()
+        form.amountChanged("45,50")
+
+        form.save()
+        form.save()
+
+        assertFalse("the button is spent while saving", form.state.value.canSave)
+
+        advanceUntilIdle()
+
+        val all = expenses.observeDays().first().flatMap { it.expenses }
+        assertEquals(1, all.size)
+        assertEquals(45.50, all.single().amount, 1e-9)
     }
 
     private fun adding() = ExpenseFormViewModel(expenses, expenseId = null, zone = zone)
