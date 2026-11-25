@@ -34,12 +34,15 @@ import com.jabulile.zaka.R
 import com.jabulile.zaka.core.Money
 import com.jabulile.zaka.data.ExpenseRepository
 import com.jabulile.zaka.data.LoyaltyCardRepository
+import com.jabulile.zaka.data.ZakaPreferences
 import com.jabulile.zaka.ui.components.MoneyText
 import com.jabulile.zaka.ui.components.ZakaIcons
 import com.jabulile.zaka.ui.expenses.ExpensesScreen
 import com.jabulile.zaka.ui.expenses.ExpensesViewModel
 import com.jabulile.zaka.ui.form.ExpenseFormScreen
 import com.jabulile.zaka.ui.form.ExpenseFormViewModel
+import com.jabulile.zaka.ui.insights.InsightsScreen
+import com.jabulile.zaka.ui.insights.InsightsViewModel
 
 /**
  * The four tabs, and the month-to-date total that sits above them wherever you
@@ -62,6 +65,7 @@ enum class ZakaTab(val labelRes: Int, val icon: ImageVector) {
 fun ZakaApp(
     expenses: ExpenseRepository,
     cards: LoyaltyCardRepository,
+    preferences: ZakaPreferences,
     modifier: Modifier = Modifier,
 ) {
     var tab by rememberSaveable { mutableStateOf(ZakaTab.EXPENSES) }
@@ -117,10 +121,33 @@ fun ZakaApp(
                 modifier = content,
             )
 
-            ZakaTab.INSIGHTS -> ComingSoon(R.string.tab_insights, content)
+            ZakaTab.INSIGHTS -> Insights(
+                expenses = expenses,
+                preferences = preferences,
+                modifier = content,
+            )
             ZakaTab.CARDS -> ComingSoon(R.string.tab_cards, content)
         }
     }
+}
+
+@Composable
+private fun Insights(
+    expenses: ExpenseRepository,
+    preferences: ZakaPreferences,
+    modifier: Modifier = Modifier,
+) {
+    val insights: InsightsViewModel =
+        viewModel(factory = InsightsViewModel.factory(expenses, preferences))
+    val state by insights.state.collectAsStateWithLifecycle()
+
+    InsightsScreen(
+        state = state,
+        onPrevious = insights::previousMonth,
+        onNext = insights::nextMonth,
+        onStyle = insights::styleChosen,
+        modifier = modifier,
+    )
 }
 
 @Composable

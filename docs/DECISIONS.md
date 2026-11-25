@@ -316,3 +316,46 @@ fight, and sixteen chips are not worth laziness. `chunked(2)` with
 `Modifier.weight(1f)` gives two equal chips per row and leaves room for the
 label next to the icon, which is what makes the grid readable without relying
 on the glyphs alone.
+
+### The daily rate divides by the days that have happened
+
+[#7](../../issues/7)
+
+`total / today.dayOfMonth` for the current month, `total / month.lengthOfMonth()`
+for any other. Dividing a month still running by all of its days understates
+the rate every day except the last, which makes the number useless for the one
+thing it is for: telling you, mid-month, whether you are spending faster than
+usual.
+
+### The donut's reveal is `SpendBreakdown.sweep`, not a view-layer animation
+
+The sweep arithmetic already exists in `:core` and already has tests saying the
+circle stays whole at every step of the animation. The chart animates a single
+float from 0 to 1 and asks `:core` what to draw at that point, so the thing
+that could be wrong — the geometry — is the thing that is tested.
+
+The animation restarts when the slice ids change, which is what makes stepping
+to another month redraw rather than morph. On iOS this needed an explicit
+32-millisecond sleep so SwiftUI had a frame at zero to animate from; Compose
+gets that for free, because `remember(key)` resets the target and the first
+composition renders it.
+
+### `SharedPreferences`, not DataStore
+
+One enum, read once when a screen opens. DataStore would add a dependency, a
+coroutine and a flow to remembering whether the breakdown was last seen as a
+donut or as bars.
+
+This is the only preference the app has. If a second screenful of them
+appears, or any of them needs to be observed rather than read, that is the
+moment to change.
+
+### Every slice announces as one thing
+
+A legend row is a coloured mark, a name, a percentage and an amount — four
+nodes a screen reader would read as four unrelated fragments. Each row is
+`clearAndSetSemantics` with "Groceries, 37%, R3,170" instead. The same applies
+to the bars, to the day headings in the list, and to the month strip.
+
+This is accessibility as a consequence of how the screen is built rather than
+something to retrofit, which is what [#14](../../issues/14) is for.
