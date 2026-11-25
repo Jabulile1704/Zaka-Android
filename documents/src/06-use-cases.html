@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zaka for Android — Use Case Diagram</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    .uc { font: 9.5px "Helvetica Neue", sans-serif; fill: #1D1B16; }
+    .uc-s { font: 7.5px "Helvetica Neue", sans-serif; fill: #B45309; }
+    .act { font: 700 9px "Helvetica Neue", sans-serif; fill: #1D1B16; }
+    .act-sub { font: 7.5px "Helvetica Neue", sans-serif; fill: #5C5748; }
+    .stereo { font: italic 8px "Helvetica Neue", sans-serif; fill: #6D28D9; }
+    .bnd { font: 700 10px "Helvetica Neue", sans-serif; fill: #5C5748; }
+</style>
+</head>
+<body>
+
+<header class="cover">
+    <div class="project">Zaka for Android</div>
+    <h1>Use Case Diagram</h1>
+    <p class="subtitle">What one person and four external systems ask of the app</p>
+    <dl class="meta">
+        <div><dt>Document</dt><dd>UC v1.0</dd></div>
+        <div><dt>Date</dt><dd>25 November 2026</dd></div>
+        <div><dt>Use cases</dt><dd>11</dd></div>
+        <div><dt>Actors</dt><dd>1 human, 3 systems</dd></div>
+    </dl>
+</header>
+
+<h2>1. Diagram</h2>
+
+<figure>
+<svg viewBox="0 0 700 500" role="img" aria-label="Use case diagram: the Owner actor and the Zaka system boundary containing eleven use cases">
+    <defs>
+        <marker id="open-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <path d="M1,1 L9,5 L1,9" fill="none" stroke="#6D28D9" stroke-width="1.3"/>
+        </marker>
+    </defs>
+
+    <!-- ===== system boundary ===== -->
+    <rect x="150" y="30" width="412" height="430" rx="5" fill="#FBF8F3" stroke="#5C5748" stroke-width="1.2"/>
+    <text x="356" y="48" class="bnd" text-anchor="middle">Zaka</text>
+
+    <!-- ===== primary actor: Owner ===== -->
+    <g transform="translate(62,228)">
+        <circle cx="0" cy="-26" r="9" fill="none" stroke="#1D1B16" stroke-width="1.4"/>
+        <line x1="0" y1="-17" x2="0" y2="8" stroke="#1D1B16" stroke-width="1.4"/>
+        <line x1="-13" y1="-8" x2="13" y2="-8" stroke="#1D1B16" stroke-width="1.4"/>
+        <line x1="0" y1="8" x2="-11" y2="28" stroke="#1D1B16" stroke-width="1.4"/>
+        <line x1="0" y1="8" x2="11" y2="28" stroke="#1D1B16" stroke-width="1.4"/>
+        <text x="0" y="44" class="act" text-anchor="middle">Owner</text>
+        <text x="0" y="55" class="act-sub" text-anchor="middle">the only user</text>
+    </g>
+
+    <!-- ===== use cases, column A (actor-facing) ===== -->
+    <g>
+        <ellipse cx="262" cy="80"  rx="92" ry="19" fill="#fff" stroke="#7A5A12" stroke-width="1.2"/>
+        <text x="262" y="84" class="uc" text-anchor="middle">Record an expense</text>
+
+        <ellipse cx="262" cy="128" rx="92" ry="19" fill="#fff" stroke="#7A5A12" stroke-width="1.2"/>
+        <text x="262" y="132" class="uc" text-anchor="middle">Correct an expense</text>
+
+        <ellipse cx="262" cy="176" rx="92" ry="19" fill="#fff" stroke="#7A5A12" stroke-width="1.2"/>
+        <text x="262" y="180" class="uc" text-anchor="middle">Remove an expense</text>
+
+        <ellipse cx="262" cy="224" rx="92" ry="19" fill="#fff" stroke="#7A5A12" stroke-width="1.2"/>
+        <text x="262" y="228" class="uc" text-anchor="middle">Review spending by day</text>
+
+        <ellipse cx="262" cy="284" rx="92" ry="19" fill="#fff" stroke="#7A5A12" stroke-width="1.2"/>
+        <text x="262" y="288" class="uc" text-anchor="middle">Review a month</text>
+
+        <ellipse cx="262" cy="356" rx="92" ry="19" fill="#fff" stroke="#0E7490" stroke-width="1.2" stroke-dasharray="5 3"/>
+        <text x="262" y="354" class="uc" text-anchor="middle">Keep a loyalty card</text>
+        <text x="262" y="366" class="uc-s" text-anchor="middle">sprint 3</text>
+
+        <ellipse cx="262" cy="404" rx="92" ry="19" fill="#fff" stroke="#0E7490" stroke-width="1.2" stroke-dasharray="5 3"/>
+        <text x="262" y="402" class="uc" text-anchor="middle">Show a card at a till</text>
+        <text x="262" y="414" class="uc-s" text-anchor="middle">sprint 3</text>
+
+        <ellipse cx="262" cy="440" rx="92" ry="16" fill="#fff" stroke="#0E7490" stroke-width="1.2" stroke-dasharray="5 3"/>
+        <text x="262" y="438" class="uc" text-anchor="middle">Export expenses</text>
+        <text x="262" y="449" class="uc-s" text-anchor="middle">sprint 3</text>
+    </g>
+
+    <!-- ===== use cases, column B (derived) ===== -->
+    <g>
+        <ellipse cx="466" cy="260" rx="84" ry="18" fill="#F6F1E8" stroke="#6D28D9" stroke-width="1" stroke-dasharray="3 2"/>
+        <text x="466" y="263" class="uc" text-anchor="middle">Choose donut or bars</text>
+
+        <ellipse cx="466" cy="308" rx="84" ry="18" fill="#F6F1E8" stroke="#6D28D9" stroke-width="1" stroke-dasharray="3 2"/>
+        <text x="466" y="311" class="uc" text-anchor="middle">Step through months</text>
+
+        <ellipse cx="466" cy="356" rx="84" ry="18" fill="#F6F1E8" stroke="#6D28D9" stroke-width="1" stroke-dasharray="3 2"/>
+        <text x="466" y="353" class="uc" text-anchor="middle">Capture a card number</text>
+        <text x="466" y="364" class="uc-s" text-anchor="middle">sprint 3</text>
+    </g>
+
+    <!-- ===== associations from the Owner ===== -->
+    <g stroke="#5C5748" stroke-width="0.9" fill="none">
+        <line x1="78" y1="212" x2="172" y2="86"/>
+        <line x1="78" y1="210" x2="172" y2="130"/>
+        <line x1="80" y1="214" x2="172" y2="174"/>
+        <line x1="84" y1="222" x2="170" y2="222"/>
+        <line x1="84" y1="236" x2="172" y2="280"/>
+        <line x1="80" y1="244" x2="172" y2="350"/>
+        <line x1="78" y1="248" x2="172" y2="398"/>
+        <line x1="76" y1="250" x2="172" y2="436"/>
+    </g>
+
+    <!-- ===== include / extend ===== -->
+    <g stroke="#6D28D9" stroke-width="1" fill="none" stroke-dasharray="5 3" marker-end="url(#open-arrow)">
+        <path d="M354,280 H382"/>
+        <path d="M354,288 C 372,300 366,306 380,306"/>
+        <path d="M356,356 H354 M382,356 H356"/>
+    </g>
+    <text x="368" y="274" class="stereo" text-anchor="middle">«include»</text>
+    <text x="368" y="322" class="stereo" text-anchor="middle">«include»</text>
+    <text x="368" y="350" class="stereo" text-anchor="middle">«extend»</text>
+
+    <!-- ===== secondary actors ===== -->
+    <g transform="translate(626,300)">
+        <rect x="-32" y="-16" width="64" height="32" rx="3" fill="#fff" stroke="#434750" stroke-width="1.2"/>
+        <text x="0" y="-2" class="act" text-anchor="middle">Device</text>
+        <text x="0" y="9" class="act" text-anchor="middle">camera</text>
+        <text x="0" y="26" class="act-sub" text-anchor="middle">«system»</text>
+    </g>
+    <line x1="550" y1="350" x2="598" y2="312" stroke="#5C5748" stroke-width="0.9"/>
+
+    <g transform="translate(626,392)">
+        <rect x="-32" y="-16" width="64" height="32" rx="3" fill="#fff" stroke="#434750" stroke-width="1.2"/>
+        <text x="0" y="-2" class="act" text-anchor="middle">Till</text>
+        <text x="0" y="9" class="act" text-anchor="middle">scanner</text>
+        <text x="0" y="26" class="act-sub" text-anchor="middle">«system»</text>
+    </g>
+    <line x1="354" y1="404" x2="594" y2="392" stroke="#5C5748" stroke-width="0.9"/>
+
+    <g transform="translate(626,452)">
+        <rect x="-32" y="-14" width="64" height="28" rx="3" fill="#fff" stroke="#434750" stroke-width="1.2"/>
+        <text x="0" y="4" class="act" text-anchor="middle">Spreadsheet</text>
+        <text x="0" y="24" class="act-sub" text-anchor="middle">«system»</text>
+    </g>
+    <line x1="354" y1="443" x2="594" y2="450" stroke="#5C5748" stroke-width="0.9"/>
+
+    <!-- ===== legend ===== -->
+    <g transform="translate(16,466)">
+        <line x1="0" y1="8" x2="22" y2="8" stroke="#5C5748" stroke-width="0.9"/>
+        <text x="27" y="11" class="act-sub">association</text>
+        <line x1="92" y1="8" x2="114" y2="8" stroke="#6D28D9" stroke-width="1" stroke-dasharray="5 3"/>
+        <text x="119" y="11" class="act-sub">include / extend</text>
+        <ellipse cx="216" cy="8" rx="13" ry="6" fill="#fff" stroke="#7A5A12" stroke-width="1.2"/>
+        <text x="234" y="11" class="act-sub">built</text>
+        <ellipse cx="274" cy="8" rx="13" ry="6" fill="#fff" stroke="#0E7490" stroke-width="1.2" stroke-dasharray="4 2"/>
+        <text x="292" y="11" class="act-sub">planned</text>
+    </g>
+</svg>
+<figcaption>One human actor, three external systems, eleven use cases. Dashed
+ellipses are scheduled for sprint 3; the pale ones are reached through another
+use case rather than directly.</figcaption>
+</figure>
+
+<div class="page-break"></div>
+
+<h2>2. Use case descriptions</h2>
+
+<p>Each use case names the requirements it satisfies. The Owner is the actor
+throughout unless stated otherwise.</p>
+
+<table>
+<thead><tr><th class="id">UC</th><th>Use case</th><th>Summary</th><th>Requirements</th></tr></thead>
+<tbody>
+<tr><td class="id">UC-1</td><td><strong>Record an expense</strong></td><td>Enter an amount, choose a category, accept or change the date, optionally add a note, and save. The expense appears under its day in the list and raises the month-to-date total.</td><td>FR-1…8, FR-18</td></tr>
+<tr><td class="id">UC-2</td><td><strong>Correct an expense</strong></td><td>Open an existing expense, change any of its fields, and save. The record is updated, not duplicated, and keeps its position in the day.</td><td>FR-13…15, FR-17</td></tr>
+<tr><td class="id">UC-3</td><td><strong>Remove an expense</strong></td><td>Delete an expense, by swiping its row or by the equivalent action for people who cannot swipe. Immediate and, in this version, permanent.</td><td>FR-16</td></tr>
+<tr><td class="id">UC-4</td><td><strong>Review spending by day</strong></td><td>Read everything recorded, newest first, grouped under calendar days with a total for each, and the month-to-date figure always in view.</td><td>FR-9…12, FR-18, FR-19</td></tr>
+<tr><td class="id">UC-5</td><td><strong>Review a month</strong></td><td>See one month's total, its spend per day, and how it divides between categories.</td><td>FR-20…23, FR-27</td></tr>
+<tr><td class="id">UC-6</td><td><strong>Choose donut or bars</strong><br><span class="stereo">«include» of UC-5</span></td><td>Switch how the breakdown is drawn. The choice is remembered for next time.</td><td>FR-22, FR-26</td></tr>
+<tr><td class="id">UC-7</td><td><strong>Step through months</strong><br><span class="stereo">«include» of UC-5</span></td><td>Move to an earlier month, and forward no further than the current one.</td><td>FR-25</td></tr>
+<tr><td class="id">UC-8</td><td><strong>Keep a loyalty card</strong><br><span class="pill open">sprint 3</span></td><td>Store a shop card's name, number and barcode type; edit or remove it later. Listed by name and last four digits.</td><td>FR-28…30, FR-33, FR-37</td></tr>
+<tr><td class="id">UC-9</td><td><strong>Capture a card number</strong><br><span class="stereo">«extend» of UC-8</span> · <span class="pill open">sprint 3</span></td><td>Read the number off the physical card with the camera instead of typing it. Extends rather than includes: card entry works fully without it. <em>Secondary actor: Device camera.</em></td><td>FR-35, FR-36, NFR-SEC-5</td></tr>
+<tr><td class="id">UC-10</td><td><strong>Show a card at a till</strong><br><span class="pill open">sprint 3</span></td><td>Display a stored card full screen as a scannable code, with brightness raised, so a counter scanner can read it. <em>Secondary actor: Till scanner.</em></td><td>FR-31, FR-32, FR-34</td></tr>
+<tr><td class="id">UC-11</td><td><strong>Export expenses</strong><br><span class="pill open">sprint 3</span></td><td>Produce a CSV of everything recorded and hand it to the system share sheet as a file. <em>Secondary actor: Spreadsheet.</em></td><td>FR-42…45</td></tr>
+</tbody>
+</table>
+
+<h2>3. The two most interesting flows</h2>
+
+<h3>3.1 UC-1 — Record an expense</h3>
+
+<table>
+<thead><tr><th style="width:22%">Field</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td><strong>Precondition</strong></td><td>The app is installed. Nothing else — no account, no permission, no connection.</td></tr>
+<tr><td><strong>Main flow</strong></td><td>
+1. Owner opens the Add tab.<br>
+2. The amount field already has focus and the decimal keypad is open.<br>
+3. Owner types an amount; both a comma and a full stop act as the decimal point.<br>
+4. Owner taps a category.<br>
+5. Owner optionally changes the date and adds a note.<br>
+6. Owner taps Save.<br>
+7. The app records the expense and returns to the list, where it appears under its day.
+</td></tr>
+<tr><td><strong>Alternatives</strong></td><td>
+<em>3a.</em> The amount is empty, not a number, or zero: Save stays disabled and nothing can be submitted.<br>
+<em>6a.</em> Save is pressed twice: exactly one expense is recorded. (Raised as DEF-3 and now covered by test.)
+</td></tr>
+<tr><td><strong>Postcondition</strong></td><td>One new record exists on the device. The month-to-date total and the day's total both reflect it.</td></tr>
+</tbody>
+</table>
+
+<h3>3.2 UC-10 — Show a card at a till</h3>
+
+<table>
+<thead><tr><th style="width:22%">Field</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td><strong>Precondition</strong></td><td>At least one card is stored, and its number can be rendered in at least one form.</td></tr>
+<tr><td><strong>Main flow</strong></td><td>
+1. Owner opens the Cards tab and taps a card.<br>
+2. The app raises screen brightness to maximum.<br>
+3. The code is drawn full screen, in whichever form the card was saved as.<br>
+4. The Till scanner reads it.<br>
+5. On leaving, the app restores the previous brightness.
+</td></tr>
+<tr><td><strong>Alternatives</strong></td><td>
+<em>3a.</em> The number cannot be drawn as a linear barcode: only the QR form is offered.<br>
+<em>3b.</em> The card was deliberately saved as Code 128: it is shown as Code 128 and never promoted to EAN-13, even if its digits happen to validate.<br>
+<em>4a.</em> The scanner cannot read it: the Owner reads the number printed beneath the code to the cashier.
+</td></tr>
+<tr><td><strong>Postcondition</strong></td><td>Nothing is changed or recorded. This use case only reads.</td></tr>
+<tr><td><strong>Note</strong></td><td>This is the one use case that cannot be verified without a real counter. A QR code of a card number is offered because it is cheap, not because any retailer promises to accept it — which is why the linear barcode remains the default.</td></tr>
+</tbody>
+</table>
+
+<h2>4. What is deliberately not a use case</h2>
+
+<table>
+<thead><tr><th>Not here</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Sign in, register, recover a password</td><td>There is no account. One person, one device.</td></tr>
+<tr><td>Share with, or grant access to, another person</td><td>Out of scope for 1.0; it would require a service and a privacy surface.</td></tr>
+<tr><td>Back up or restore</td><td>Android's own backup does this. The app's part is declaring that its database should be included, which is configuration rather than a use case.</td></tr>
+<tr><td>Manage categories</td><td>The sixteen are fixed at build time. Editing them would mean a schema that can lose records to a rename, which §2 of the ERD argues against.</td></tr>
+<tr><td>Set a budget, receive an alert</td><td>Candidate for 1.1. Insights answer where the money went, not whether it was allowed.</td></tr>
+</tbody>
+</table>
+
+<footer class="doc">
+    Zaka for Android — Use Case Diagram v1.0 · 25 November 2026 ·
+    github.com/Jabulile1704/Zaka-Android
+</footer>
+
+</body>
+</html>

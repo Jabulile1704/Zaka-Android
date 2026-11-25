@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zaka for Android — Requirements Specification</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="cover">
+    <div class="project">Zaka for Android</div>
+    <h1>Functional and Non-Functional<br>Requirements Specification</h1>
+    <p class="subtitle">A personal expense tracker for Android, ported from iOS</p>
+    <dl class="meta">
+        <div><dt>Document</dt><dd>SRS v1.0</dd></div>
+        <div><dt>Date</dt><dd>25 November 2026</dd></div>
+        <div><dt>Author</dt><dd>Jabulile Mashibini</dd></div>
+        <div><dt>Target release</dt><dd>1.0.0</dd></div>
+    </dl>
+</header>
+
+<h2>1. Purpose and scope</h2>
+
+<p>Zaka records what one person spends and tells them where it went. It runs on
+one phone, stores everything on that phone, and talks to nothing. This document
+states what it must do, how well it must do it, and what it deliberately will
+not do.</p>
+
+<p>It describes the Android port of
+<span class="mono">Jabulile1704/Zaka</span>, an iOS app already in daily use.
+That app is the reference: where this document says <strong>parity</strong>, the
+requirement is "behave as iOS does", and the iOS test suite is the specification
+of record.</p>
+
+<h3>1.1 Actors</h3>
+
+<table>
+<thead><tr><th>Actor</th><th>Type</th><th>Interest</th></tr></thead>
+<tbody>
+<tr><td><strong>Owner</strong></td><td>Human, primary</td><td>The single user. Logs expenses, reads insights, carries loyalty cards. There is no second role, no sharing and no login.</td></tr>
+<tr><td><strong>Till scanner</strong></td><td>External system</td><td>Reads a barcode off the screen at a shop counter. Cannot be tested in an emulator.</td></tr>
+<tr><td><strong>Device camera</strong></td><td>External system</td><td>Reads a barcode off a physical card during card entry.</td></tr>
+<tr><td><strong>Android Backup</strong></td><td>External system</td><td>The only off-device copy of the data, and only if the user has backup enabled.</td></tr>
+<tr><td><strong>Spreadsheet</strong></td><td>External system</td><td>Consumes the CSV export. Constrains the number format far more than the display does.</td></tr>
+</tbody>
+</table>
+
+<h3>1.2 Assumptions and constraints</h3>
+
+<ul>
+<li>One user, one device. No account, no server, no sync in 1.0.</li>
+<li>Currency is South African Rand and is fixed at build time.</li>
+<li>The device runs Android 8.0 (API 26) or later.</li>
+<li>The store is unencrypted SQLite, readable from an unlocked phone or a device backup. This bounds what may be kept in it — see <span class="mono">NFR-SEC-2</span>.</li>
+<li>There is no budget for a paid service of any kind, so anything requiring a backend is out of scope by construction.</li>
+</ul>
+
+<h2>2. Functional requirements</h2>
+
+<p>Priority: <strong>M</strong> must have for 1.0, <strong>S</strong> should
+have, <strong>C</strong> could have. "Verified by" names the automated test
+that holds the requirement, or states how else it is checked.</p>
+
+<h3>2.1 Recording an expense</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th class="c">Pri</th><th>Issue</th><th>Verified by</th></tr></thead>
+<tbody>
+<tr><td class="id">FR-1</td><td>The user can record an expense consisting of an amount, a category, a date and an optional note.</td><td class="c">M</td><td>#6</td><td><span class="mono">ExpenseFormViewModelTest</span></td></tr>
+<tr><td class="id">FR-2</td><td>The amount field accepts both <span class="mono">.</span> and <span class="mono">,</span> as the decimal separator. A separator followed by one or two digits is a decimal point; otherwise it is grouping. So <span class="mono">45,50</span> is 45.50 and <span class="mono">1,234</span> is 1234.</td><td class="c">M</td><td>#2</td><td><span class="mono">MoneyTest</span> (5 cases)</td></tr>
+<tr><td class="id">FR-3</td><td>The amount field opens focused with a decimal keypad, so logging an expense takes no preparatory tap.</td><td class="c">S</td><td>#6</td><td>Manual, on device</td></tr>
+<tr><td class="id">FR-4</td><td>An expense must have an amount greater than zero to be saveable. The save control is disabled until it does.</td><td class="c">M</td><td>#6</td><td><span class="mono">ExpenseFormViewModelTest</span></td></tr>
+<tr><td class="id">FR-5</td><td>Exactly one expense is recorded per save, however many times the control is pressed.</td><td class="c">M</td><td>#6</td><td><span class="mono">ExpenseFormViewModelTest</span> — regression, see DEF-3</td></tr>
+<tr><td class="id">FR-6</td><td>The category is chosen from sixteen fixed categories, each with its own colour and glyph.</td><td class="c">M</td><td>#2, #6</td><td><span class="mono">ExpenseCategoryTest</span></td></tr>
+<tr><td class="id">FR-7</td><td>The date defaults to today and may be changed to any date via a picker.</td><td class="c">M</td><td>#6</td><td><span class="mono">ExpenseFormViewModelTest</span></td></tr>
+<tr><td class="id">FR-8</td><td>A note of only whitespace counts as no note.</td><td class="c">S</td><td>#2</td><td><span class="mono">ExpenseTest</span></td></tr>
+</tbody>
+</table>
+
+<h3>2.2 Reviewing and changing expenses</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th class="c">Pri</th><th>Issue</th><th>Verified by</th></tr></thead>
+<tbody>
+<tr><td class="id">FR-9</td><td>All expenses are listed newest first, grouped under the calendar day they belong to.</td><td class="c">M</td><td>#5</td><td><span class="mono">DayGroupTest</span>, <span class="mono">ExpenseStoreTest</span></td></tr>
+<tr><td class="id">FR-10</td><td>The calendar day is determined in the device's time zone, not UTC.</td><td class="c">M</td><td>#4</td><td><span class="mono">DayGroupTest</span> (23:30 UTC case)</td></tr>
+<tr><td class="id">FR-11</td><td>Each day heading shows that day's total.</td><td class="c">M</td><td>#5</td><td><span class="mono">ExpenseStoreTest</span></td></tr>
+<tr><td class="id">FR-12</td><td>Within a day, expenses are ordered newest first, and the order is stable for two expenses recorded in the same millisecond.</td><td class="c">S</td><td>#4</td><td><span class="mono">ExpenseStoreTest</span></td></tr>
+<tr><td class="id">FR-13</td><td>Tapping an expense opens it for editing. Editing uses the same form as adding.</td><td class="c">M</td><td>#6</td><td><span class="mono">ExpenseFormViewModelTest</span></td></tr>
+<tr><td class="id">FR-14</td><td>Editing an expense preserves its time of day, so correcting an amount does not reorder the list.</td><td class="c">S</td><td>#6</td><td><span class="mono">ExpenseFormViewModelTest</span></td></tr>
+<tr><td class="id">FR-15</td><td>Updating an expense modifies the existing record rather than creating a second one.</td><td class="c">M</td><td>#6</td><td><span class="mono">ExpenseFormViewModelTest</span></td></tr>
+<tr><td class="id">FR-16</td><td>An expense can be deleted by swiping its row, and by an equivalent non-gesture action.</td><td class="c">M</td><td>#5, #14</td><td><span class="mono">AccessibilityTest</span></td></tr>
+<tr><td class="id">FR-17</td><td>Opening an expense that has already been deleted closes the form rather than showing an empty one.</td><td class="c">S</td><td>#6</td><td><span class="mono">ExpenseFormViewModelTest</span></td></tr>
+<tr><td class="id">FR-18</td><td>The month-to-date total is visible from every screen.</td><td class="c">S</td><td>#5</td><td><span class="mono">ExpensesViewModelTest</span></td></tr>
+<tr><td class="id">FR-19</td><td>The month-to-date total follows the calendar: it is not fixed to the month in which the app was launched.</td><td class="c">M</td><td>#5</td><td><span class="mono">ExpensesViewModelTest</span> — regression, see DEF-2</td></tr>
+</tbody>
+</table>
+
+<h3>2.3 Insights</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th class="c">Pri</th><th>Issue</th><th>Verified by</th></tr></thead>
+<tbody>
+<tr><td class="id">FR-20</td><td>For a chosen month, the app shows the total spent and the spend per day.</td><td class="c">M</td><td>#7</td><td><span class="mono">InsightsViewModelTest</span></td></tr>
+<tr><td class="id">FR-21</td><td>Spend per day divides by the days elapsed for a month still running, and by the whole month otherwise.</td><td class="c">S</td><td>#7</td><td><span class="mono">InsightsViewModelTest</span></td></tr>
+<tr><td class="id">FR-22</td><td>Spend is broken down by category, as either a donut chart or horizontal bars.</td><td class="c">M</td><td>#7</td><td><span class="mono">InsightsViewModelTest</span></td></tr>
+<tr><td class="id">FR-23</td><td>At most six slices are shown. Smaller categories are merged into one labelled "+N more", preserving the total.</td><td class="c">M</td><td>#2</td><td><span class="mono">SpendBreakdownTest</span> (12 cases)</td></tr>
+<tr><td class="id">FR-24</td><td>Categories with equal totals are ordered by name, so the same data always draws the same chart.</td><td class="c">S</td><td>#2</td><td><span class="mono">SpendBreakdownTest</span></td></tr>
+<tr><td class="id">FR-25</td><td>The user can step back through previous months and forward no further than the current one.</td><td class="c">M</td><td>#7</td><td><span class="mono">InsightsViewModelTest</span></td></tr>
+<tr><td class="id">FR-26</td><td>The choice of donut or bars is remembered between launches.</td><td class="c">S</td><td>#7</td><td><span class="mono">InsightsViewModelTest</span></td></tr>
+<tr><td class="id">FR-27</td><td>A month with no expenses shows zero rather than an error or a blank.</td><td class="c">M</td><td>#7</td><td><span class="mono">InsightsViewModelTest</span></td></tr>
+</tbody>
+</table>
+
+<h3>2.4 Loyalty cards <span class="pill open">sprint 3</span></h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th class="c">Pri</th><th>Issue</th><th>Verified by</th></tr></thead>
+<tbody>
+<tr><td class="id">FR-28</td><td>The user can store shop loyalty cards, each with a name, a number and a barcode type.</td><td class="c">M</td><td>#8</td><td><span class="mono">LoyaltyCardStoreTest</span></td></tr>
+<tr><td class="id">FR-29</td><td>A card is listed by name and the last four digits of its number, never the whole number.</td><td class="c">S</td><td>#8</td><td><span class="mono">LoyaltyCardTest</span></td></tr>
+<tr><td class="id">FR-30</td><td>The barcode type is detected from the number as it is typed: a valid 13-digit code is EAN-13, anything else Code 128. The user may override it.</td><td class="c">M</td><td>#8</td><td><span class="mono">LoyaltyCardTest</span></td></tr>
+<tr><td class="id">FR-31</td><td>A card opens full screen as a scannable code, and screen brightness goes to maximum while it is shown.</td><td class="c">M</td><td>#8</td><td>Manual, at a till</td></tr>
+<tr><td class="id">FR-32</td><td>A card can be shown as a linear barcode or as a QR code of the same number, opening in whichever form it was saved as.</td><td class="c">S</td><td>#8</td><td><span class="mono">CardDisplayModeTest</span> (7 cases)</td></tr>
+<tr><td class="id">FR-33</td><td>Only forms that can actually render the number are offered. A card deliberately saved as Code 128 is never promoted to EAN-13.</td><td class="c">M</td><td>#8</td><td><span class="mono">CardDisplayModeTest</span></td></tr>
+<tr><td class="id">FR-34</td><td>EAN-13 is rendered as vector bars from a computed 95-module pattern, not as a scaled bitmap.</td><td class="c">M</td><td>#2</td><td><span class="mono">Ean13Test</span> — encode/decode round trip</td></tr>
+<tr><td class="id">FR-35</td><td>A card number can be captured with the camera instead of typed.</td><td class="c">S</td><td>#9</td><td>Manual, on device</td></tr>
+<tr><td class="id">FR-36</td><td>Where the camera is unavailable, the scanner says so rather than showing a dead viewfinder.</td><td class="c">S</td><td>#9</td><td>Manual, in emulator</td></tr>
+<tr><td class="id">FR-37</td><td>No payment card numbers are accepted or stored.</td><td class="c">M</td><td>#8</td><td>Design: see NFR-SEC-2</td></tr>
+</tbody>
+</table>
+
+<h3>2.5 Data, export and categories</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th class="c">Pri</th><th>Issue</th><th>Verified by</th></tr></thead>
+<tbody>
+<tr><td class="id">FR-38</td><td>All data is stored on the device and survives restart and app update.</td><td class="c">M</td><td>#4</td><td><span class="mono">ExpenseStoreTest</span></td></tr>
+<tr><td class="id">FR-39</td><td>Categories are stored as stable text keys, never as enum ordinals or names, so renaming a category in code cannot re-map saved records.</td><td class="c">M</td><td>#4</td><td><span class="mono">MappersTest</span>, <span class="mono">ExpenseStoreTest</span></td></tr>
+<tr><td class="id">FR-40</td><td>A retired category key is mapped to its replacement when read, without rewriting the stored record.</td><td class="c">M</td><td>#2, #4</td><td><span class="mono">ExpenseCategoryTest</span>, <span class="mono">ExpenseStoreTest</span></td></tr>
+<tr><td class="id">FR-41</td><td>An unrecognised category or barcode key falls back to a sensible value rather than failing.</td><td class="c">M</td><td>#4</td><td><span class="mono">MappersTest</span></td></tr>
+<tr><td class="id">FR-42</td><td>Expenses can be exported as CSV with the columns <span class="mono">Date,Category,Note,Amount</span>, oldest first.</td><td class="c">S</td><td>#10</td><td>Sprint 3</td></tr>
+<tr><td class="id">FR-43</td><td>Exported amounts are plain numbers with a dot decimal, no symbol and no grouping, so a spreadsheet reads them as numbers.</td><td class="c">M</td><td>#10</td><td>Sprint 3</td></tr>
+<tr><td class="id">FR-44</td><td>Notes in the export are quoted and embedded quotes doubled, so commas, quotes and newlines survive.</td><td class="c">M</td><td>#10</td><td>Sprint 3</td></tr>
+<tr><td class="id">FR-45</td><td>The export is handed to the system share sheet as a file, not as raw bytes.</td><td class="c">M</td><td>#10</td><td>Sprint 3 — see iOS defect record</td></tr>
+</tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>3. Non-functional requirements</h2>
+
+<h3>3.1 Usability and platform fit</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th>How it is judged</th></tr></thead>
+<tbody>
+<tr><td class="id">NFR-USE-1</td><td>The app follows Android's design language — Material 3 Expressive — and does not imitate the iOS original's Liquid Glass surface.</td><td>Review against Material guidance; the information architecture carries over, the surface does not.</td></tr>
+<tr><td class="id">NFR-USE-2</td><td>Where the device offers a wallpaper-derived palette, the app uses it; otherwise it uses its own.</td><td>Android 12+ dynamic colour, with the brand scheme as fallback.</td></tr>
+<tr><td class="id">NFR-USE-3</td><td>Recording an expense takes no more than four interactions from launch: tab, amount, category, save.</td><td>Counted on device.</td></tr>
+<tr><td class="id">NFR-USE-4</td><td>Amounts are displayed identically regardless of device locale: <span class="mono">R1,234.56</span>.</td><td><span class="mono">MoneyTest</span>.</td></tr>
+<tr><td class="id">NFR-USE-5</td><td>Figures that change in place use tabular digits, so totals do not jitter.</td><td>Inspection on device.</td></tr>
+</tbody>
+</table>
+
+<h3>3.2 Accessibility</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th>How it is judged</th></tr></thead>
+<tbody>
+<tr><td class="id">NFR-A11Y-1</td><td>Every destructive or primary action reachable by gesture is also reachable without one.</td><td><span class="mono">AccessibilityTest</span> asserts the delete action and invokes it.</td></tr>
+<tr><td class="id">NFR-A11Y-2</td><td>A row, a day heading, a chart row and the month strip each announce as one phrase, not as disconnected fragments.</td><td><span class="mono">AccessibilityTest</span>.</td></tr>
+<tr><td class="id">NFR-A11Y-3</td><td>Headings are marked as headings so a screen reader can navigate between them.</td><td><span class="mono">AccessibilityTest</span>.</td></tr>
+<tr><td class="id">NFR-A11Y-4</td><td>Icon-only controls carry a text label; decorative glyphs carry none.</td><td>Review and <span class="mono">AccessibilityTest</span>.</td></tr>
+<tr><td class="id">NFR-A11Y-5</td><td>The interface remains usable with the system font scaled to 200%.</td><td><strong>Open.</strong> Needs a device; see the test report's coverage gaps.</td></tr>
+<tr><td class="id">NFR-A11Y-6</td><td>Category identity is never carried by colour alone — every colour is paired with a glyph and a label.</td><td>Review.</td></tr>
+</tbody>
+</table>
+
+<h3>3.3 Performance</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th>How it is judged</th></tr></thead>
+<tbody>
+<tr><td class="id">NFR-PERF-1</td><td>Cold start to a usable list in under 1 second on mid-range hardware.</td><td>Local store, no network, no splash gating work.</td></tr>
+<tr><td class="id">NFR-PERF-2</td><td>Grouping and totalling happen off the composition, not during it: the list receives days already bucketed and summed.</td><td>Architecture review; the repository returns <span class="mono">DayGroup</span>.</td></tr>
+<tr><td class="id">NFR-PERF-3</td><td>The month query is served by an index on the date column.</td><td>Schema: <span class="mono">Index("date")</span>.</td></tr>
+<tr><td class="id">NFR-PERF-4</td><td>Scrolling stays at the display refresh rate for a year of expenses.</td><td><strong>Open.</strong> Needs a device. A known limit is recorded as DEF-7.</td></tr>
+</tbody>
+</table>
+
+<h3>3.4 Reliability and data safety</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th>How it is judged</th></tr></thead>
+<tbody>
+<tr><td class="id">NFR-REL-1</td><td>No user action loses data silently. Reads never rewrite the store.</td><td><span class="mono">ExpenseStoreTest</span> asserts the stored key is untouched after a mapped read.</td></tr>
+<tr><td class="id">NFR-REL-2</td><td>The expense database is included in device backups; nothing else is.</td><td><span class="mono">backup_rules.xml</span>, <span class="mono">data_extraction_rules.xml</span>.</td></tr>
+<tr><td class="id">NFR-REL-3</td><td>A schema change ships with a migration and a schema under version control before it reaches a user.</td><td>Not yet applicable at version 1 of the schema.</td></tr>
+<tr><td class="id">NFR-REL-4</td><td>Installing over an existing copy preserves the data. Uninstalling destroys it, and the documentation says so.</td><td>DevOps documentation.</td></tr>
+</tbody>
+</table>
+
+<h3>3.5 Security and privacy</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th>How it is judged</th></tr></thead>
+<tbody>
+<tr><td class="id">NFR-SEC-1</td><td>The app makes no network requests, carries no analytics and no crash reporting, and requests no network permission.</td><td>Manifest review; no networking dependency in the build.</td></tr>
+<tr><td class="id">NFR-SEC-2</td><td>Nothing is stored that would be dangerous to read from an unlocked phone. Loyalty cards only; never payment cards.</td><td>Design constraint, stated in the user manual and enforced by what the card form accepts.</td></tr>
+<tr><td class="id">NFR-SEC-3</td><td>The repository contains no keys, tokens, certificates or keystores, and no real expense data.</td><td><span class="mono">.gitignore</span> excludes <span class="mono">backup/</span> and keystores from the first commit.</td></tr>
+<tr><td class="id">NFR-SEC-4</td><td>The commit identity exposes no personal email address.</td><td>A GitHub noreply address is used.</td></tr>
+<tr><td class="id">NFR-SEC-5</td><td>The camera permission is requested only when the scanner is opened, and the app works fully without it.</td><td>Sprint 3.</td></tr>
+</tbody>
+</table>
+
+<h3>3.6 Maintainability and portability</h3>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Requirement</th><th>How it is judged</th></tr></thead>
+<tbody>
+<tr><td class="id">NFR-MNT-1</td><td>Logic that decides what a value <em>means</em> lives in a module with no Android dependency, and is testable with a JDK alone.</td><td><span class="mono">:core</span> is a plain JVM library; <span class="mono">:core:test</span> needs no SDK or emulator.</td></tr>
+<tr><td class="id">NFR-MNT-2</td><td>Every dependency version is declared in one place.</td><td><span class="mono">gradle/libs.versions.toml</span>.</td></tr>
+<tr><td class="id">NFR-MNT-3</td><td>Every change arrives through a pull request with CI passing, and carries a written reason.</td><td>Branch and PR workflow; CI required on every pull request.</td></tr>
+<tr><td class="id">NFR-MNT-4</td><td>Non-obvious decisions are recorded with their reasoning, so they are not "simplified" back into defects.</td><td><span class="mono">docs/DECISIONS.md</span>.</td></tr>
+<tr><td class="id">NFR-MNT-5</td><td>Minimum supported platform is Android 8.0 (API 26), chosen so that date and time handling needs no desugaring.</td><td><span class="mono">minSdk = 26</span>.</td></tr>
+<tr><td class="id">NFR-MNT-6</td><td>Each icon reference exists in exactly one file, so the icon set can be replaced without touching screens.</td><td><span class="mono">ZakaIcons</span>.</td></tr>
+</tbody>
+</table>
+
+<h2>4. Out of scope for 1.0</h2>
+
+<table>
+<thead><tr><th>Excluded</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Multi-device sync</td><td>Needs a backend or a paid cloud entitlement. The iOS app has the code for it and keeps it switched off for the same reason.</td></tr>
+<tr><td>Multiple users, accounts, sign-in</td><td>A personal tracker. An account would add a privacy surface and a service to run, for no gain to its one user.</td></tr>
+<tr><td>Budgets, limits and alerts</td><td>Candidate for 1.1. Insights answer "where did it go", not "am I allowed".</td></tr>
+<tr><td>Recurring expenses</td><td>Candidate for 1.1.</td></tr>
+<tr><td>Multiple currencies</td><td>One user, one country. The symbol is a single constant if that changes.</td></tr>
+<tr><td>Bank or SMS import</td><td>Would require reading messages or a bank integration: a large privacy surface against a design principle of touching nothing.</td></tr>
+<tr><td>Undo for a deletion</td><td><strong>Gap, not a decision.</strong> Recorded as DEF-5 and scheduled.</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+    <span class="label">On traceability</span>
+    <p>Every requirement above names the issue it came from and the test that
+    holds it. Requirements marked <em>Open</em> or <em>sprint 3</em> are
+    deliberately listed with no passing test rather than quietly omitted — the
+    point of a specification is that the gaps are visible.</p>
+</div>
+
+<footer class="doc">
+    Zaka for Android — Requirements Specification v1.0 · 25 November 2026 ·
+    github.com/Jabulile1704/Zaka-Android
+</footer>
+
+</body>
+</html>

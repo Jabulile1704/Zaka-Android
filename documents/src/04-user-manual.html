@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zaka for Android — User Manual</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="cover">
+    <div class="project">Zaka for Android</div>
+    <h1>User Manual</h1>
+    <p class="subtitle">Everything you can do, and the few things worth being careful about</p>
+    <dl class="meta">
+        <div><dt>Document</dt><dd>UM v1.0</dd></div>
+        <div><dt>Date</dt><dd>25 November 2026</dd></div>
+        <div><dt>App version</dt><dd>1.0.0</dd></div>
+        <div><dt>Requires</dt><dd>Android 8.0 or later</dd></div>
+    </dl>
+</header>
+
+<h2>1. What Zaka is</h2>
+
+<p>Zaka records what you spend, so that at the end of a month you can see where
+the money went. You type an amount, pick a category, and that is the whole of
+it.</p>
+
+<p>Everything stays on your phone. There is no account to create, no password,
+and no server. Zaka makes no network connections at all: it cannot send your
+spending anywhere, because it has nothing to send it to and no permission to
+try.</p>
+
+<div class="note">
+    <span class="label">What this version includes</span>
+    <p>Recording, listing and editing expenses, and monthly insights. <strong>Loyalty
+    cards, the barcode scanner and the CSV export are not in this build</strong>
+    — they are described in sections 7 and 8 so you know what is coming, and each
+    says so plainly.</p>
+</div>
+
+<h2>2. Getting started</h2>
+
+<h3>2.1 Installing</h3>
+
+<ol>
+<li>Install Zaka from Google Play, or from a build supplied to you directly.</li>
+<li>Open it. There is nothing to set up — no sign-in, no permissions to grant,
+no first-run questions.</li>
+<li>The Expenses tab opens, empty, with a short note telling you so.</li>
+</ol>
+
+<p>If you are installing a new version over an old one, <strong>install over the
+top</strong>. Do not uninstall first; see section 9.</p>
+
+<h3>2.2 Finding your way around</h3>
+
+<p>Four tabs along the bottom, and one figure above them.</p>
+
+<table>
+<thead><tr><th>Tab</th><th>What it is for</th></tr></thead>
+<tbody>
+<tr><td><strong>Expenses</strong></td><td>Everything you have recorded, newest first, grouped by day. This is where you edit and delete.</td></tr>
+<tr><td><strong>Add</strong></td><td>Recording something new.</td></tr>
+<tr><td><strong>Insights</strong></td><td>What a month came to, and where it went.</td></tr>
+<tr><td><strong>Cards</strong></td><td>Shop loyalty cards. Not in this build.</td></tr>
+</tbody>
+</table>
+
+<p>Just above the tabs, <strong>This month</strong> shows your running total for
+the current calendar month. It is there on every tab, deliberately: it is the
+one number worth seeing while you are doing something else.</p>
+
+<h2>3. Recording an expense</h2>
+
+<ol>
+<li>Tap <strong>Add</strong>. The amount field is already selected and the
+number keypad is already open, so you can start typing immediately.</li>
+<li>Type the amount.</li>
+<li>Tap a category.</li>
+<li>Change the date if it was not today, and add a note if it is worth
+remembering.</li>
+<li>Tap <strong>Save</strong>. Zaka returns to the Expenses list with the new
+entry at the top.</li>
+</ol>
+
+<div class="note">
+    <span class="label">Typing amounts: the comma</span>
+    <p>On a South African keypad the decimal key is a comma, and Zaka expects
+    that. Both the comma and the full stop work as the decimal point:</p>
+    <table style="margin-top:2mm; margin-bottom:0">
+    <thead><tr><th>You type</th><th>Zaka records</th><th>Why</th></tr></thead>
+    <tbody>
+    <tr><td class="mono">45,50</td><td class="num">R45.50</td><td>One or two digits after the separator means cents.</td></tr>
+    <tr><td class="mono">45.50</td><td class="num">R45.50</td><td>The same.</td></tr>
+    <tr><td class="mono">1,234</td><td class="num">R1,234.00</td><td>Three digits after it, so that is a thousands separator.</td></tr>
+    <tr><td class="mono">1,234.56</td><td class="num">R1,234.56</td><td>Both, read the way you meant them.</td></tr>
+    <tr><td class="mono">,50</td><td class="num">R0.50</td><td>Fifty cents.</td></tr>
+    </tbody>
+    </table>
+</div>
+
+<p>Amounts are always displayed as <span class="mono">R1,234.56</span>, whatever
+your phone's language and region are set to.</p>
+
+<h3>3.1 The categories</h3>
+
+<p>There are sixteen, and they cannot be edited or added to in this version. Each
+has its own colour and symbol, so you can read the list without reading the
+words.</p>
+
+<table>
+<thead><tr><th>Category</th><th>Typically</th><th>Category</th><th>Typically</th></tr></thead>
+<tbody>
+<tr><td>Takeaways</td><td>Eating out, delivery</td><td>Accounts</td><td>Store and credit accounts</td></tr>
+<tr><td>Groceries</td><td>Food shopping</td><td>Cash</td><td>Money drawn or handed over</td></tr>
+<tr><td>Transport</td><td>Taxi, fuel, e-hailing</td><td>Travelling</td><td>Trips away</td></tr>
+<tr><td>Rent</td><td>Rent, bond, levies</td><td>Dates</td><td>Going out</td></tr>
+<tr><td>Utilities</td><td>Electricity, water</td><td>Airtime</td><td>Airtime and data</td></tr>
+<tr><td>Health</td><td>Chemist, doctor, medical aid</td><td>Haircut</td><td>Barber, salon</td></tr>
+<tr><td>WiFi</td><td>Home internet</td><td>Shopping</td><td>Clothes and things</td></tr>
+<tr><td>Subscriptions</td><td>Monthly services</td><td>Others</td><td>Anything that fits nowhere</td></tr>
+</tbody>
+</table>
+
+<p>If you are unsure, use <strong>Others</strong>. It is better to record the
+expense than to lose it deciding where it belongs.</p>
+
+<h3>3.2 If Save will not work</h3>
+
+<p>Save stays greyed out until the amount is a number greater than zero. An
+empty field, letters, or a zero will keep it disabled. Nothing else on the form
+is required — you can save with no note and today's date.</p>
+
+<h2>4. The Expenses list</h2>
+
+<p>Everything you have recorded, newest first, under a heading for each day. The
+heading shows that day's total; today and yesterday are named rather than
+dated.</p>
+
+<table>
+<thead><tr><th>To</th><th>Do this</th></tr></thead>
+<tbody>
+<tr><td>See the details of an expense</td><td>They are all on the row: the note or category, the category name, and the amount.</td></tr>
+<tr><td>Change an expense</td><td>Tap the row. The same form opens with everything filled in. Tap <strong>Update</strong>.</td></tr>
+<tr><td>Abandon a change</td><td>Tap <strong>Cancel</strong>, or use the back gesture.</td></tr>
+<tr><td>Delete an expense</td><td>Swipe the row from right to left. Or open it and tap <strong>Delete this expense</strong>.</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+    <span class="label">Deleting cannot be undone</span>
+    <p>There is no undo and no confirmation in this version. A swipe removes the
+    expense immediately and permanently. Swiping the other way does nothing, so
+    an accidental brush is unlikely — but if you are not sure, open the row and
+    read it before deleting.</p>
+</div>
+
+<p>Correcting an expense does not move it. If you fix an amount you typed wrong
+this morning, it stays where it was in this morning's list rather than jumping
+to the top.</p>
+
+<h2>5. Insights</h2>
+
+<p>The Insights tab answers two questions about one month.</p>
+
+<ul>
+<li><strong>What did the month come to</strong> — the total, at the top.</li>
+<li><strong>Where did it go</strong> — a donut or a set of bars, one per
+category, with each category's share as a percentage.</li>
+</ul>
+
+<p>Underneath the total is <strong>Per day</strong>. For a month still running
+this divides by the days so far, not by the whole month, so the figure means
+"this is the rate I am going at" rather than being artificially low for most of
+the month.</p>
+
+<h3>5.1 Moving between months</h3>
+
+<p>The arrows beside the month name step back and forward. You cannot step past
+the current month, because there is nothing there. Stepping back far enough
+reaches whatever your earliest expense is; emptier months simply read zero.</p>
+
+<h3>5.2 Donut or bars</h3>
+
+<p>Use the switch under the total. Zaka remembers which you chose and opens that
+way next time.</p>
+
+<p>Sixteen categories would be sixteen slivers and unreadable, so the chart keeps
+the five largest and adds the rest together as <strong>+N more</strong>. The
+total is never changed by that merging — the small categories are grouped, not
+dropped. The list underneath always names everything with its share and its
+amount, so if two colours look alike, read the list.</p>
+
+<h2>6. Reading the screen with TalkBack</h2>
+
+<p>Zaka is built to be used without sight.</p>
+
+<ul>
+<li><strong>Day headings are headings</strong>, so you can jump between days
+rather than swiping through every expense.</li>
+<li><strong>Rows read as one phrase.</strong> A day heading announces "Today,
+R150.00"; a chart row announces "Groceries, 37%, R3,170.00" — not as a series
+of disconnected fragments.</li>
+<li><strong>Delete does not need the swipe.</strong> Each expense carries an
+action called "Delete this expense" in TalkBack's actions menu, which does
+exactly what the swipe does.</li>
+<li><strong>Every icon-only control is labelled</strong> — the month arrows
+announce as "Previous month" and "Next month".</li>
+<li><strong>Colour is never the only signal.</strong> Every category colour is
+paired with a symbol and its name in text.</li>
+</ul>
+
+<p>If you use a large system font and something is cut off or cramped, that is a
+fault worth reporting — it is not yet verified at the largest sizes.</p>
+
+<h2>7. Loyalty cards <span class="pill na">not in this build</span></h2>
+
+<p>A coming version will keep your shop loyalty cards so the plastic can stay at
+home. You will be able to add a card by typing its number or scanning the
+barcode with the camera, and tap a card to show it full screen as a barcode for
+the till to read — with the screen brightness turned up so the scanner can see
+it, and a QR option for the same number.</p>
+
+<p><strong>Loyalty cards only. Never put a bank or credit card number into
+Zaka.</strong> What Zaka stores is not encrypted, which is fine for a shop
+card's number and is not fine for anything that can take money.</p>
+
+<h2>8. Exporting your expenses <span class="pill na">not in this build</span></h2>
+
+<p>A coming version will export everything as a CSV file you can share to email,
+Files, or a spreadsheet. The amounts will be plain numbers so a spreadsheet adds
+them up rather than treating them as text.</p>
+
+<h2>9. Looking after your data</h2>
+
+<p>Zaka's database is the only copy of your expenses. There is no server holding
+a second one.</p>
+
+<table>
+<thead><tr><th>Situation</th><th>What happens</th></tr></thead>
+<tbody>
+<tr><td>You restart the phone</td><td>Nothing. Your data is on the device.</td></tr>
+<tr><td>You install a new version over the old one</td><td>Nothing. Your data is kept.</td></tr>
+<tr><td><strong>You uninstall Zaka</strong></td><td><strong>Your expenses are destroyed.</strong> Android removes the app's data with the app.</td></tr>
+<tr><td>You back the phone up</td><td>Zaka's database is included, if you have Android's backup turned on.</td></tr>
+<tr><td>You move to a new phone</td><td>The database comes across with the backup. Check that your expenses are there before wiping the old phone.</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+    <span class="label">Before anything risky</span>
+    <p>Before uninstalling, resetting, or moving to a new phone, make sure
+    Android's backup is on and has run. Once the export in section 8 exists,
+    export a CSV and mail it to yourself as well.</p>
+</div>
+
+<h2>10. If something looks wrong</h2>
+
+<table>
+<thead><tr><th>Symptom</th><th>Likely reason</th><th>What to do</th></tr></thead>
+<tbody>
+<tr><td>An amount is a hundred times too big</td><td>A separator was read as grouping rather than as a decimal point — for instance <span class="mono">4550</span> typed without one.</td><td>Tap the row and correct it. See section 3 for how separators are read.</td></tr>
+<tr><td>An expense is under the wrong day</td><td>The date was left as today when the spending happened earlier.</td><td>Tap the row and change the date.</td></tr>
+<tr><td>"This month" looks too low</td><td>It counts the current calendar month only, not the last thirty days.</td><td>Use Insights and step back a month to see the rest.</td></tr>
+<tr><td>Two identical expenses</td><td>Saved twice.</td><td>Delete one. This was a defect in an early build and is fixed.</td></tr>
+<tr><td>Two chart colours look alike</td><td>Sixteen categories, a limited palette.</td><td>Read the list under the chart; it names every slice.</td></tr>
+<tr><td>Everything is gone</td><td>The app was uninstalled and reinstalled.</td><td>Restore from a device backup if you have one. There is nothing else to recover from, and that is the trade for having no server.</td></tr>
+</tbody>
+</table>
+
+<h2>11. Your privacy, in full</h2>
+
+<ul>
+<li>Zaka collects nothing and sends nothing.</li>
+<li>It has no analytics, no crash reporting and no advertising.</li>
+<li>It has no network permission, so it could not phone home if it wanted to.</li>
+<li>Your expenses are stored in Zaka's own private area on your phone, and
+included in your device backup if you have one.</li>
+<li>Nobody — including whoever wrote it — can see what you spend.</li>
+<li>The trade for that is honest: if the data is lost from your phone and your
+backup, it is gone.</li>
+</ul>
+
+<footer class="doc">
+    Zaka for Android — User Manual v1.0 · 25 November 2026 ·
+    github.com/Jabulile1704/Zaka-Android
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zaka for Android — Entity Relationship Diagram</title>
+<link rel="stylesheet" href="style.css">
+<style>
+    .ent-title { font: 700 11px "Helvetica Neue", sans-serif; fill: #fff; }
+    .col { font: 10px "SF Mono", Menlo, monospace; fill: #1D1B16; }
+    .typ { font: 9px "SF Mono", Menlo, monospace; fill: #5C5748; }
+    .badge { font: 700 7.5px "Helvetica Neue", sans-serif; fill: #fff; }
+    .note-t { font: 9px "Helvetica Neue", sans-serif; fill: #5C5748; }
+    .rel-t { font: italic 9px "Helvetica Neue", sans-serif; fill: #B45309; }
+    .dom-v { font: 9px "SF Mono", Menlo, monospace; fill: #1D1B16; }
+</style>
+</head>
+<body>
+
+<header class="cover">
+    <div class="project">Zaka for Android</div>
+    <h1>Entity Relationship Diagram</h1>
+    <p class="subtitle">The on-device SQLite schema, version 1</p>
+    <dl class="meta">
+        <div><dt>Document</dt><dd>ERD v1.0</dd></div>
+        <div><dt>Date</dt><dd>25 November 2026</dd></div>
+        <div><dt>Engine</dt><dd>SQLite via Room 2.8.5</dd></div>
+        <div><dt>Schema</dt><dd>version 1</dd></div>
+    </dl>
+</header>
+
+<h2>1. The schema</h2>
+
+<figure>
+<svg viewBox="0 0 700 420" role="img" aria-label="Entity relationship diagram of the expenses and loyalty_cards tables and their value domains">
+
+    <!-- ===== expenses ===== -->
+    <rect x="26" y="34" width="300" height="153" rx="4" fill="#fff" stroke="#7A5A12" stroke-width="1.4"/>
+    <path d="M26,38 a4,4 0 0 1 4,-4 h292 a4,4 0 0 1 4,4 v20 h-300 z" fill="#7A5A12"/>
+    <text x="38" y="52" class="ent-title">expenses</text>
+    <text x="318" y="52" class="badge" text-anchor="end">TABLE</text>
+
+    <g class="col">
+        <text x="78" y="75">id</text>
+        <text x="78" y="96">amount</text>
+        <text x="78" y="117">category</text>
+        <text x="78" y="138">date</text>
+        <text x="78" y="159">note</text>
+    </g>
+    <g class="typ" text-anchor="end">
+        <text x="318" y="75">INTEGER</text>
+        <text x="318" y="96">REAL</text>
+        <text x="318" y="117">TEXT</text>
+        <text x="318" y="138">INTEGER</text>
+        <text x="318" y="159">TEXT</text>
+    </g>
+    <!-- key badges -->
+    <rect x="36" y="66" width="30" height="12" rx="2" fill="#7A5A12"/><text x="51" y="75.5" class="badge" text-anchor="middle">PK</text>
+    <rect x="36" y="129" width="30" height="12" rx="2" fill="#434750"/><text x="51" y="138.5" class="badge" text-anchor="middle">IDX</text>
+    <g stroke="#EBE2CF" stroke-width="0.8">
+        <line x1="26" y1="80" x2="326" y2="80"/>
+        <line x1="26" y1="101" x2="326" y2="101"/>
+        <line x1="26" y1="122" x2="326" y2="122"/>
+        <line x1="26" y1="143" x2="326" y2="143"/>
+    </g>
+    <text x="26" y="200" class="note-t">AUTOINCREMENT · amount in rand · date is epoch milliseconds (UTC)</text>
+
+    <!-- ===== loyalty_cards ===== -->
+    <rect x="374" y="34" width="300" height="174" rx="4" fill="#fff" stroke="#0E7490" stroke-width="1.4"/>
+    <path d="M374,38 a4,4 0 0 1 4,-4 h292 a4,4 0 0 1 4,4 v20 h-300 z" fill="#0E7490"/>
+    <text x="386" y="52" class="ent-title">loyalty_cards</text>
+    <text x="666" y="52" class="badge" text-anchor="end">TABLE</text>
+
+    <g class="col">
+        <text x="426" y="75">id</text>
+        <text x="426" y="96">name</text>
+        <text x="426" y="117">number</text>
+        <text x="426" y="138">symbology</text>
+        <text x="426" y="159">tint_hex</text>
+        <text x="426" y="180">added_at</text>
+    </g>
+    <g class="typ" text-anchor="end">
+        <text x="666" y="75">INTEGER</text>
+        <text x="666" y="96">TEXT</text>
+        <text x="666" y="117">TEXT</text>
+        <text x="666" y="138">TEXT</text>
+        <text x="666" y="159">TEXT</text>
+        <text x="666" y="180">INTEGER</text>
+    </g>
+    <rect x="384" y="66" width="30" height="12" rx="2" fill="#0E7490"/><text x="399" y="75.5" class="badge" text-anchor="middle">PK</text>
+    <g stroke="#EBE2CF" stroke-width="0.8">
+        <line x1="374" y1="80"  x2="674" y2="80"/>
+        <line x1="374" y1="101" x2="674" y2="101"/>
+        <line x1="374" y1="122" x2="674" y2="122"/>
+        <line x1="374" y1="143" x2="674" y2="143"/>
+        <line x1="374" y1="164" x2="674" y2="164"/>
+    </g>
+    <text x="374" y="200" class="note-t">AUTOINCREMENT · number is a shop card, never a payment card</text>
+
+    <!-- ===== no relationship between the two ===== -->
+    <line x1="326" y1="112" x2="374" y2="112" stroke="#CFC6B4" stroke-width="1" stroke-dasharray="2 3"/>
+    <text x="350" y="107" class="rel-t" text-anchor="middle">×</text>
+    <text x="350" y="126" class="note-t" text-anchor="middle" font-size="8">no relation</text>
+
+    <!-- ===== domain: ExpenseCategory ===== -->
+    <rect x="26" y="248" width="300" height="104" rx="4" fill="#FBF8F3" stroke="#7A5A12" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="38" y="266" font="700 10px sans-serif" fill="#7A5A12" style="font:700 10px sans-serif">ExpenseCategory</text>
+    <text x="318" y="266" class="badge" style="fill:#7A5A12" text-anchor="end">VALUE DOMAIN · 16</text>
+    <g class="dom-v">
+        <text x="38" y="285">takeaways · groceries · transport · rent</text>
+        <text x="38" y="300">utilities · health · wifi · subscriptions</text>
+        <text x="38" y="315">shopping · accounts · cash · travelling</text>
+        <text x="38" y="330">dates · airtime · haircut · other</text>
+    </g>
+    <text x="38" y="346" class="note-t" style="font-size:7.5px">retired on read: food→takeaways, bills→accounts, fun→other</text>
+
+    <!-- ===== domain: BarcodeSymbology ===== -->
+    <rect x="374" y="248" width="300" height="104" rx="4" fill="#FBF8F3" stroke="#0E7490" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="386" y="266" style="font:700 10px sans-serif" fill="#0E7490">BarcodeSymbology</text>
+    <text x="666" y="266" class="badge" style="fill:#0E7490" text-anchor="end">VALUE DOMAIN · 3</text>
+    <g class="dom-v">
+        <text x="386" y="285">ean13 — 13 digits with a valid check digit</text>
+        <text x="386" y="300">code128 — any ASCII string</text>
+        <text x="386" y="315">qr — any string</text>
+    </g>
+    <text x="386" y="334" class="note-t" style="font-size:7.5px">unknown key falls back to code128 on read</text>
+
+    <!-- ===== connectors: column to domain ===== -->
+    <g stroke="#7A5A12" stroke-width="1" fill="none" stroke-dasharray="4 3">
+        <path d="M326,117 H348 V232 H120 V248"/>
+    </g>
+    <polygon points="120,248 116,240 124,240" fill="#7A5A12"/>
+    <text x="236" y="228" class="rel-t" text-anchor="middle">drawn from, validated in code</text>
+
+    <g stroke="#0E7490" stroke-width="1" fill="none" stroke-dasharray="4 3">
+        <path d="M674,138 H688 V232 H470 V248"/>
+    </g>
+    <polygon points="470,248 466,240 474,240" fill="#0E7490"/>
+    <text x="580" y="228" class="rel-t" fill="#0E7490" text-anchor="middle">drawn from, validated in code</text>
+
+    <!-- legend -->
+    <g transform="translate(26,372)">
+        <rect x="0" y="0" width="648" height="34" rx="3" fill="#F0EBE1"/>
+        <text x="10" y="14" class="note-t" font-size="8.5"><tspan font-weight="700">PK</tspan> primary key, auto-increment · <tspan font-weight="700">IDX</tspan> indexed · <tspan font-weight="700">dashed box</tspan> a set of permitted values enforced by application code, not by a table</text>
+        <text x="10" y="27" class="note-t" font-size="8.5">No foreign keys, no joins and no lookup tables exist in this schema. §2 explains why that is deliberate.</text>
+    </g>
+</svg>
+<figcaption>Zaka's complete schema. Two independent tables and two value domains
+that exist in code rather than in the database.</figcaption>
+</figure>
+
+<h2>2. Why there are no relationships</h2>
+
+<p>An entity relationship diagram with no relationships looks like an oversight.
+It is the central decision of this schema.</p>
+
+<p><strong>A category is a text key, not a row in a lookup table.</strong> The
+<span class="mono">category</span> column holds <span class="mono">"groceries"</span>,
+and the sixteen permitted values live in a Kotlin enumeration. The obvious
+alternative — a <span class="mono">categories</span> table with a foreign key —
+was rejected for three reasons.</p>
+
+<ul>
+<li><strong>Nothing would ever be written to it.</strong> The categories are
+fixed at build time. A lookup table would be read-only data shipped in a
+migration, which is a Kotlin enumeration with extra steps.</li>
+<li><strong>A join on every read, for nothing.</strong> Every list, every chart
+and every export would join to recover a label that the application already
+knows.</li>
+<li><strong>It would not survive renaming.</strong> The real risk here is not
+referential integrity, it is a refactor: rename a category in code and, if the
+column held an ordinal or an enum name, every saved record would silently come
+to mean something else. A stable text key cannot be renamed by accident,
+because the compiler never touches it.</li>
+</ul>
+
+<p>That last point is not hypothetical. On the iOS original the category list
+was replaced and later partly restored, and because the column held text, the
+affected expenses returned to their original categories on their own — nothing
+had overwritten them.</p>
+
+<h3>2.1 How integrity is kept instead</h3>
+
+<table>
+<thead><tr><th>Normally enforced by</th><th>Here</th></tr></thead>
+<tbody>
+<tr><td>A foreign key constraint</td><td>A total function on read. An unrecognised category becomes <span class="mono">other</span>; an unrecognised symbology becomes <span class="mono">code128</span>. Reading a row can never fail.</td></tr>
+<tr><td>A migration that rewrites rows when a reference changes</td><td>A mapping applied at read time. A retired key is translated for display and <strong>left untouched in the database</strong>, so the decision is reversible.</td></tr>
+<tr><td>Constraints on value ranges</td><td>Validation in the form: an amount must be greater than zero before it can be saved.</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+    <span class="label">Reading never writes</span>
+    <p>This is asserted by test: store a record with a retired category, read it
+    back through the mapping, and confirm the stored key is still the retired
+    one. It is what makes the mapping a display convenience rather than a silent
+    migration.</p>
+</div>
+
+<div class="page-break"></div>
+
+<h2>3. Columns in detail</h2>
+
+<h3>3.1 expenses</h3>
+
+<table>
+<thead><tr><th>Column</th><th>Type</th><th>Null</th><th>Meaning and constraints</th></tr></thead>
+<tbody>
+<tr><td class="mono">id</td><td class="mono">INTEGER</td><td class="c">no</td><td>Primary key, auto-increment. A value of 0 in the application means "not yet saved".</td></tr>
+<tr><td class="mono">amount</td><td class="mono">REAL</td><td class="c">no</td><td>Rand. Must be greater than zero to be saved. Stored as typed, formatted only for display.</td></tr>
+<tr><td class="mono">category</td><td class="mono">TEXT</td><td class="c">no</td><td>A key from the ExpenseCategory domain. Unknown and retired keys are handled on read.</td></tr>
+<tr><td class="mono">date</td><td class="mono">INTEGER</td><td class="c">no</td><td>Epoch milliseconds, UTC. <strong>Indexed.</strong> The calendar day and month are derived in the device's zone, never from the raw value.</td></tr>
+<tr><td class="mono">note</td><td class="mono">TEXT</td><td class="c">no</td><td>May be empty. Whitespace-only counts as empty.</td></tr>
+</tbody>
+</table>
+
+<h3>3.2 loyalty_cards</h3>
+
+<table>
+<thead><tr><th>Column</th><th>Type</th><th>Null</th><th>Meaning and constraints</th></tr></thead>
+<tbody>
+<tr><td class="mono">id</td><td class="mono">INTEGER</td><td class="c">no</td><td>Primary key, auto-increment.</td></tr>
+<tr><td class="mono">name</td><td class="mono">TEXT</td><td class="c">no</td><td>The shop's name, as the user types it.</td></tr>
+<tr><td class="mono">number</td><td class="mono">TEXT</td><td class="c">no</td><td>The card number. Text, not a number: leading zeros matter to a barcode. Shop cards only.</td></tr>
+<tr><td class="mono">symbology</td><td class="mono">TEXT</td><td class="c">no</td><td>A key from the BarcodeSymbology domain. Detected from the number but overridable, so it is stored rather than derived.</td></tr>
+<tr><td class="mono">tint_hex</td><td class="mono">TEXT</td><td class="c">no</td><td>Six hexadecimal digits. Presentation, stored so a card keeps its colour.</td></tr>
+<tr><td class="mono">added_at</td><td class="mono">INTEGER</td><td class="c">no</td><td>Epoch milliseconds. Orders the card list, newest first.</td></tr>
+</tbody>
+</table>
+
+<h3>3.3 Why dates are integers</h3>
+
+<p>Epoch milliseconds sort correctly in SQL, need no type converter, and let the
+month query be <span class="mono">WHERE date &gt;= ? AND date &lt; ?</span>,
+which the index on <span class="mono">date</span> can serve. An ISO-8601 string
+would also sort correctly and would cost four times the space for no gain.</p>
+
+<p>The range is half-open on purpose. A month runs from local midnight on the
+first up to, but not including, local midnight on the first of the next month,
+so nobody has to reason about whether the last millisecond of a month is
+included. Both ends are computed in the device's zone: in South Africa a month
+begins two hours before the UTC date changes, and taking that boundary in UTC
+would put the first evening of each month in the wrong one.</p>
+
+<h2>4. From table to application</h2>
+
+<p>The tables are not the types the application reasons about. Each row is
+mapped to a domain record, and the mapping is where the keys become values.</p>
+
+<table>
+<thead><tr><th>Table</th><th>Domain record</th><th>What changes in the mapping</th></tr></thead>
+<tbody>
+<tr><td class="mono">expenses</td><td class="mono">core.Expense</td><td><span class="mono">category</span> text → <span class="mono">ExpenseCategory</span>, via the retired-key mapping. <span class="mono">date</span> millis → an instant.</td></tr>
+<tr><td class="mono">loyalty_cards</td><td class="mono">core.LoyaltyCard</td><td><span class="mono">symbology</span> text → <span class="mono">BarcodeSymbology</span>, falling back where unknown. <span class="mono">added_at</span> millis → an instant. The last four digits are derived, never stored.</td></tr>
+</tbody>
+</table>
+
+<p>Keeping the two apart costs a mapper and buys the thing above: the column
+stays a string whatever happens to the Kotlin.</p>
+
+<h2>5. Schema versioning</h2>
+
+<p>The schema is at version 1 and no migrations exist. Room's schema export is
+deliberately switched off until there is a migration to validate against —
+an exported schema that nobody has committed looks like a record without being
+one. The first migration turns it on.</p>
+
+<table>
+<thead><tr><th>Version</th><th>Change</th><th>Migration</th></tr></thead>
+<tbody>
+<tr><td class="c">1</td><td>Initial schema: <span class="mono">expenses</span>, <span class="mono">loyalty_cards</span></td><td>—</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+    <span class="label">What the storage does not do</span>
+    <p>The database is unencrypted SQLite in the app's private directory. It is
+    protected by the device lock and by Android's app sandbox, and by nothing
+    else. That is appropriate for expense records and shop card numbers, and it
+    is the reason a payment card number must never be stored here.</p>
+</div>
+
+<footer class="doc">
+    Zaka for Android — Entity Relationship Diagram v1.0 · 25 November 2026 ·
+    github.com/Jabulile1704/Zaka-Android
+</footer>
+
+</body>
+</html>

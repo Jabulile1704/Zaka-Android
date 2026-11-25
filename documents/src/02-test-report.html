@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zaka for Android — Test Report</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="cover">
+    <div class="project">Zaka for Android</div>
+    <h1>Test Report</h1>
+    <p class="subtitle">Sprints 1 and 2 — results, coverage and the defect log</p>
+    <dl class="meta">
+        <div><dt>Document</dt><dd>TR v1.0</dd></div>
+        <div><dt>Date</dt><dd>25 November 2026</dd></div>
+        <div><dt>Tests</dt><dd>93 automated</dd></div>
+        <div><dt>Result</dt><dd><span class="pill pass">all passing</span></dd></div>
+    </dl>
+</header>
+
+<h2>1. Summary</h2>
+
+<p>93 automated tests run on every push and every pull request. All pass. They
+cover the arithmetic, the database, the state holders and the semantics a
+screen reader is given. They cover nothing about how the app looks, and that is
+the headline finding of this report.</p>
+
+<table>
+<thead><tr><th>Suite</th><th>Command</th><th class="c">Tests</th><th class="c">Pass</th><th class="c">Fail</th><th>Needs</th></tr></thead>
+<tbody>
+<tr><td><strong>Logic</strong></td><td class="mono">:core:test</td><td class="c">49</td><td class="c">49</td><td class="c">0</td><td>A JDK. No SDK, no emulator.</td></tr>
+<tr><td><strong>App unit</strong></td><td class="mono">:app:testDebugUnitTest</td><td class="c">44</td><td class="c">44</td><td class="c">0</td><td>The SDK; Robolectric for Room and Compose.</td></tr>
+<tr><td><strong>Lint</strong></td><td class="mono">:app:lintDebug</td><td class="c">—</td><td class="c">clean</td><td class="c">0</td><td>The SDK.</td></tr>
+<tr><td><strong>Instrumented</strong></td><td>—</td><td class="c">0</td><td class="c">—</td><td class="c">—</td><td>An emulator or device. Not yet written: see §5.</td></tr>
+</tbody>
+</table>
+
+<div class="warn">
+    <span class="label">Material qualification</span>
+    <p>No build in this report has run on a developer machine. The machine the
+    code was written on has no JDK, no Gradle and no Android SDK, so continuous
+    integration is the only thing that has ever compiled it, and the only thing
+    that has ever run these tests. <strong>The application has not been
+    launched by a human.</strong> A green pipeline here says the project
+    assembles and the arithmetic is right. It says nothing about whether the
+    theme works, whether the chart is readable, or whether a barcode scans.</p>
+</div>
+
+<h2>2. Test environment</h2>
+
+<table>
+<thead><tr><th>Item</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Runner</td><td>GitHub Actions, <span class="mono">ubuntu-latest</span></td></tr>
+<tr><td>JDK</td><td>Temurin 21 (project minimum 17)</td></tr>
+<tr><td>Gradle / AGP / Kotlin</td><td>9.9.2 / 9.5.2 / 2.4.21</td></tr>
+<tr><td>Compose BOM</td><td>2026.11.01 (Material 3 1.5.0)</td></tr>
+<tr><td>Android SDK</td><td>Platform 37.1 compiled against, build tools 36.0.0, <span class="mono">minSdk</span> 26</td></tr>
+<tr><td>Room</td><td>2.8.5, in-memory database for tests</td></tr>
+<tr><td>Robolectric</td><td>4.18.1, emulating API 34</td></tr>
+<tr><td>Observed duration</td><td>Logic ≈1 min; app build and unit tests ≈4–5 min; lint ≈3 min</td></tr>
+</tbody>
+</table>
+
+<h3>2.1 Approach</h3>
+
+<ul>
+<li><strong>The iOS suite is the specification.</strong> Tests were translated
+from the Swift originals <em>before</em> the Kotlin they test was written, so
+the port had something to satisfy rather than a reference to paraphrase.</li>
+<li><strong>Nothing is mocked.</strong> Store tests run the real Room database
+in memory; state-holder tests drive real view models over that database. A fake
+repository would only prove the fake behaves like the fake.</li>
+<li><strong>The barcode encoder is checked against an independent decoder</strong>
+written inside the test, so a mistake shared between encoder and expectation
+cannot pass.</li>
+<li><strong>Clocks and time zones are injected</strong>, so behaviour at a month
+boundary and over midnight is asserted rather than reasoned about.</li>
+</ul>
+
+<h2>3. Results by area</h2>
+
+<table>
+<thead><tr><th>Area</th><th>Suite</th><th class="c">Tests</th><th>What it would catch</th><th class="c">Result</th></tr></thead>
+<tbody>
+<tr><td>Amount parsing and formatting</td><td class="mono">MoneyTest</td><td class="c">5</td><td>The comma decimal, grouping mistaken for decimals, partial input, display drifting with locale</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>EAN-13</td><td class="mono">Ean13Test</td><td class="c">6</td><td>Check digit, guard patterns, a code that encodes to something that will not scan</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Spend breakdown</td><td class="mono">SpendBreakdownTest</td><td class="c">12</td><td>Slice ranking, the merge boundary, totals lost in merging, charts reshuffling between runs, division by zero</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Day grouping</td><td class="mono">DayGroupTest</td><td class="c">4</td><td>Bucketing, per-day totals, a day boundary taken in UTC instead of locally</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Month windows</td><td class="mono">MonthWindowTest</td><td class="c">4</td><td>A month starting at UTC rather than local midnight; the last millisecond of a month</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Categories</td><td class="mono">ExpenseCategoryTest</td><td class="c">4</td><td>A retired key losing its records, duplicate keys, a missing label or colour</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Card display rules</td><td class="mono">CardDisplayModeTest</td><td class="c">7</td><td>A card offered in a form that cannot render its number; a Code 128 card promoted to EAN-13</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Cards and symbology</td><td class="mono">LoyaltyCardTest</td><td class="c">4</td><td>Type detection, acceptance, the last four digits</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Expense record</td><td class="mono">ExpenseTest</td><td class="c">3</td><td>A whitespace note counting as a note</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Entity mapping</td><td class="mono">MappersTest</td><td class="c">7</td><td>An enum name reaching a column, lost milliseconds, a read rewriting a row, an unknown key crashing</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Expense store</td><td class="mono">ExpenseStoreTest</td><td class="c">8</td><td>Round trip, retired keys, grouping and totals from SQL, update inserting instead, month boundaries</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Card store</td><td class="mono">LoyaltyCardStoreTest</td><td class="c">5</td><td>Round trip, raw symbology, ordering, an edit duplicating a card</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Expenses screen state</td><td class="mono">ExpensesViewModelTest</td><td class="c">4</td><td>Days and total arriving together, an empty store, a delete reaching the state, the month rolling over</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Form state</td><td class="mono">ExpenseFormViewModelTest</td><td class="c">11</td><td>The comma decimal end to end, unsaveable input, the preserved time of day, double-tap inserts, editing a deleted expense</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Insights state</td><td class="mono">InsightsViewModelTest</td><td class="c">5</td><td>Totals and ordering, the daily rate's divisor, stepping into the future, an empty month, a forgotten preference</td><td class="c"><span class="pill pass">pass</span></td></tr>
+<tr><td>Screen-reader semantics</td><td class="mono">AccessibilityTest</td><td class="c">4</td><td>Announcements fragmenting, missing headings, an unlabelled icon, a delete unreachable without a gesture</td><td class="c"><span class="pill pass">pass</span></td></tr>
+</tbody>
+</table>
+
+<h3>3.1 Requirement coverage</h3>
+
+<table>
+<thead><tr><th>Requirement group</th><th class="c">Requirements</th><th class="c">Covered by a test</th><th class="c">Manual or open</th></tr></thead>
+<tbody>
+<tr><td>Recording an expense (FR-1…8)</td><td class="c">8</td><td class="c">7</td><td class="c">1</td></tr>
+<tr><td>Reviewing and changing (FR-9…19)</td><td class="c">11</td><td class="c">11</td><td class="c">0</td></tr>
+<tr><td>Insights (FR-20…27)</td><td class="c">8</td><td class="c">8</td><td class="c">0</td></tr>
+<tr><td>Loyalty cards (FR-28…37)</td><td class="c">10</td><td class="c">5</td><td class="c">5</td></tr>
+<tr><td>Data and export (FR-38…45)</td><td class="c">8</td><td class="c">4</td><td class="c">4</td></tr>
+<tr><td>Non-functional</td><td class="c">26</td><td class="c">9</td><td class="c">17</td></tr>
+</tbody>
+</table>
+
+<p>The card and export gaps are work not yet built — sprint 3 — rather than
+work built and untested. The non-functional gaps are mostly things a test
+cannot settle: whether a chart is legible, whether a barcode scans at a till.</p>
+
+<div class="page-break"></div>
+
+<h2>4. Defect log</h2>
+
+<p>Every defect found so far, how it was found, and where it stands. Four were
+found and fixed; the rest are known and scheduled.</p>
+
+<table>
+<thead><tr><th class="id">ID</th><th>Defect</th><th>Found by</th><th class="c">Severity</th><th class="c">State</th></tr></thead>
+<tbody>
+<tr>
+  <td class="id">DEF-1</td>
+  <td><strong>App would not compile against the declared SDK.</strong> Compose 1.13 requires consumers to compile against API 37.1; the project declared 37, which means 37.0. The build failed at <span class="mono">checkDebugAarMetadata</span> with six identical complaints.</td>
+  <td>CI, first run</td><td class="c">Major</td><td class="c"><span class="pill pass">fixed</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-2</td>
+  <td><strong>Month-to-date total frozen at launch.</strong> The current month was read once where the state flow was declared, so the figure above the tab bar kept totalling the month in which the process started. Leaving the app open overnight on the first of a month showed last month's total above this month's expenses. Day headings went stale the same way, so "Today" meant yesterday.</td>
+  <td>Code review</td><td class="c">Major</td><td class="c"><span class="pill pass">fixed</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-3</td>
+  <td><strong>Double tap on Save recorded two expenses.</strong> Nothing guarded the in-flight save, so two presses launched two writes, both reading an unsaved record and both inserting. Easy to trigger: the button sits under the thumb with the keypad open.</td>
+  <td>Code review</td><td class="c">Major</td><td class="c"><span class="pill pass">fixed</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-4</td>
+  <td><strong>Test suite would not compile.</strong> An assertion helper was imported as a top-level function when it is a member, so the accessibility suite failed to build.</td>
+  <td>CI</td><td class="c">Minor</td><td class="c"><span class="pill pass">fixed</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-5</td>
+  <td><strong>A deletion cannot be undone.</strong> One swipe removes an expense with no confirmation and no way back. Restricting the swipe to one direction reduces mis-swipes; it is not a substitute for undo.</td>
+  <td>Code review</td><td class="c">Major</td><td class="c"><span class="pill open">open</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-6</td>
+  <td><strong>A state holder is retained for every expense ever edited.</strong> The edit screen keys its view model on the expense id, so each one edited stays in the activity's store until the process dies — the pattern the add screen deliberately avoided.</td>
+  <td>Code review</td><td class="c">Minor</td><td class="c"><span class="pill open">open</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-7</td>
+  <td><strong>The list query reads the whole table.</strong> Every insert re-emits, re-maps and re-groups every expense ever recorded. Acceptable for a year of data; it wants a windowed or paged query before it is several years old.</td>
+  <td>Code review</td><td class="c">Minor</td><td class="c"><span class="pill open">open</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-8</td>
+  <td><strong>A number formatter is constructed on every call.</strong> Once per row, per heading, per legend entry, per recomposition — the hottest path the app has.</td>
+  <td>Code review</td><td class="c">Trivial</td><td class="c"><span class="pill open">open</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-9</td>
+  <td><strong>A save reports success for an update that changed nothing.</strong> The row count returned by the update is discarded, so saving an expense that was deleted elsewhere silently does nothing and the caller is told it worked.</td>
+  <td>Code review</td><td class="c">Minor</td><td class="c"><span class="pill open">open</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-10</td>
+  <td><strong>A future-dated expense inflates the daily rate.</strong> The divisor is the days elapsed, but nothing stops an expense being dated later in the month, so the money lands in the total while the divisor stays small.</td>
+  <td>Code review</td><td class="c">Trivial</td><td class="c"><span class="pill open">open</span></td>
+</tr>
+<tr>
+  <td class="id">DEF-11</td>
+  <td><strong>The accessibility action is rebuilt on every recomposition</strong>, invalidating the semantics node with it, on a list that re-emits whenever any expense changes.</td>
+  <td>Code review</td><td class="c">Trivial</td><td class="c"><span class="pill open">open</span></td>
+</tr>
+</tbody>
+</table>
+
+<p>Two observations that are not defects but were raised in review and are worth
+recording: parameter names shadowing flow properties in the insights state
+holder, and validation of the amount living in two places with no single source
+of truth.</p>
+
+<h3>4.1 Where the defects came from</h3>
+
+<table>
+<thead><tr><th>Source</th><th class="c">Found</th><th>Comment</th></tr></thead>
+<tbody>
+<tr><td>Continuous integration</td><td class="c">2</td><td>Both were compilation failures. CI caught them on the first run of a pipeline built in the same sprint — which is the pipeline earning its place on day one.</td></tr>
+<tr><td>Code review</td><td class="c">9</td><td>Including all three functional defects. None of them would have been caught by the test suite as written, because each was a gap in what the tests thought to ask.</td></tr>
+<tr><td>Automated tests</td><td class="c">0</td><td>Not a criticism: the tests were written before the code and so encode intent, not mistakes. They now hold DEF-2 and DEF-3 closed.</td></tr>
+<tr><td>Manual use</td><td class="c">0</td><td><strong>Because there has not been any.</strong> See §5.</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+    <span class="label">The useful lesson</span>
+    <p>Reading the diff as a whole found three real functional defects that 93
+    passing tests did not. Two are now regression-tested. A test suite says
+    whether the code does what its author thought; it cannot say whether the
+    author thought of everything.</p>
+</div>
+
+<h2>5. Coverage gaps</h2>
+
+<table>
+<thead><tr><th>Gap</th><th>Consequence</th><th>Closed by</th></tr></thead>
+<tbody>
+<tr><td><strong>Nothing has been run by a person.</strong></td><td>No evidence about appearance, layout, animation timing, keypad behaviour or whether the app is pleasant to use.</td><td>Installing Android Studio and running it. Nothing else substitutes.</td></tr>
+<tr><td>No instrumented tests</td><td>No coverage of the real Android runtime: permissions, process death, the share sheet, the camera.</td><td>An emulator job, scheduled with the camera scanner (#9), which is the first thing that genuinely needs a device.</td></tr>
+<tr><td>No visual regression</td><td>A theme or layout change could break a screen with every test still green.</td><td>Screenshot tests, if they ever earn their maintenance cost.</td></tr>
+<tr><td>Font scaling at 200% unverified</td><td>The sixteen-chip category grid and the donut's centre label are the likely casualties.</td><td>Device check. Tracked as NFR-A11Y-5.</td></tr>
+<tr><td>Chart legibility unverified</td><td>Two adjacent slices with close hues may be indistinguishable; the legend is what rescues it.</td><td>Device check.</td></tr>
+<tr><td>Performance unmeasured</td><td>NFR-PERF-1 and NFR-PERF-4 are assertions, not measurements.</td><td>Device run with a year of seeded data.</td></tr>
+<tr><td>Barcode scanning unverified</td><td>The encoder round-trips in a test; no till has read it.</td><td>A real card at a real counter.</td></tr>
+<tr><td>Export not built</td><td>FR-42…45 have no implementation to test.</td><td>Sprint 3 (#10).</td></tr>
+</tbody>
+</table>
+
+<h2>6. Conclusion</h2>
+
+<p>The arithmetic, the storage and the state of this application are well
+covered and all of it passes. The three functional defects found so far were
+found by reading the code, not by running it, and the two that mattered are now
+held closed by tests.</p>
+
+<p>The honest state of quality is therefore: <strong>correct as far as anything
+has been able to check, and unexercised as software</strong>. The next
+meaningful quality activity is not another test — it is launching the app.</p>
+
+<footer class="doc">
+    Zaka for Android — Test Report v1.0 · 25 November 2026 ·
+    93 tests · github.com/Jabulile1704/Zaka-Android
+</footer>
+
+</body>
+</html>

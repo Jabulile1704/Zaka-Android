@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Zaka for Android — Work Breakdown Structure</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="cover">
+    <div class="project">Zaka for Android</div>
+    <h1>Work Breakdown Structure</h1>
+    <p class="subtitle">Deliverables, dependencies, schedule and critical path</p>
+    <dl class="meta">
+        <div><dt>Document</dt><dd>WBS v1.0</dd></div>
+        <div><dt>Date</dt><dd>25 November 2026</dd></div>
+        <div><dt>Sprints</dt><dd>4 × 1 week</dd></div>
+        <div><dt>Target</dt><dd>22 December 2026</dd></div>
+    </dl>
+</header>
+
+<h2>1. How to read this</h2>
+
+<p>Work is decomposed to the level of a single pull request, because that is
+the unit this project actually ships: one issue, one branch, one review, one
+merge. Every work package below names its GitHub issue.</p>
+
+<p><strong>Effort</strong> is in ideal days of focused work on the package
+itself, excluding review and waiting. <strong>State</strong> is as at 25
+November 2026, when sprints 1 and 2 were complete and awaiting merge.</p>
+
+<h2>2. Breakdown</h2>
+
+<h3>1 — Foundation <span class="pill pass">complete</span></h3>
+
+<table>
+<thead><tr><th class="id">WBS</th><th>Work package</th><th>Deliverable</th><th>Issue</th><th class="c">Effort</th><th class="c">State</th></tr></thead>
+<tbody>
+<tr><td class="id">1.1</td><td>Gradle project scaffold</td><td>Two-module build, version catalogue, wrapper</td><td>#1</td><td class="c">0.5</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">1.2</td><td>Port the shared logic and its tests</td><td><span class="mono">:core</span> — money, barcodes, grouping, breakdown, categories; 42 tests</td><td>#2</td><td class="c">1.5</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">1.3</td><td>Continuous integration</td><td>Two-job pipeline on every push and pull request</td><td>#3</td><td class="c">0.5</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">1.4</td><td>Material 3 Expressive theme</td><td>Colour, shape, type, motion; dynamic colour with a brand fallback</td><td>#11</td><td class="c">0.5</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">1.5</td><td>Lifecycle and architecture documentation</td><td>SDLC, DevOps, decisions, workflow, architecture</td><td>#15</td><td class="c">1.0</td><td class="c"><span class="pill pass">done</span></td></tr>
+</tbody>
+</table>
+
+<h3>2 — Data and user interface <span class="pill pass">complete</span></h3>
+
+<table>
+<thead><tr><th class="id">WBS</th><th>Work package</th><th>Deliverable</th><th>Issue</th><th class="c">Effort</th><th class="c">State</th></tr></thead>
+<tbody>
+<tr><td class="id">2.1</td><td>Persistence</td><td>Room entities, DAOs returning flows, mappers, repositories, month windows</td><td>#4</td><td class="c">1.0</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">2.2</td><td>Expenses screen and app shell</td><td>Day-grouped list, swipe to delete, four-tab shell, month-to-date strip</td><td>#5</td><td class="c">1.5</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">2.3</td><td>Add and edit form</td><td>Amount, date picker, note, sixteen-category grid; one form, two modes</td><td>#6</td><td class="c">1.5</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">2.4</td><td>Monthly insights</td><td>Total, daily rate, donut and bars, month stepper, remembered choice</td><td>#7</td><td class="c">1.5</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">2.5</td><td>Accessibility</td><td>Non-gesture delete, headings, merged announcements, semantics tests, lint in CI</td><td>#14</td><td class="c">0.5</td><td class="c"><span class="pill pass">done</span></td></tr>
+<tr><td class="id">2.6</td><td>Project documentation</td><td>Requirements, test report, WBS, user manual, ERD, use cases, wireframes</td><td>#23</td><td class="c">1.0</td><td class="c"><span class="pill pass">done</span></td></tr>
+</tbody>
+</table>
+
+<h3>3 — Cards <span class="pill open">open</span></h3>
+
+<table>
+<thead><tr><th class="id">WBS</th><th>Work package</th><th>Deliverable</th><th>Issue</th><th class="c">Effort</th><th class="c">State</th></tr></thead>
+<tbody>
+<tr><td class="id">3.1</td><td>Card list and form</td><td>Add, edit and delete a card; tile with name and last four digits</td><td>#8</td><td class="c">1.0</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">3.2</td><td>Code rendering</td><td>EAN-13 as vector bars, Code 128 and QR; full-screen view, brightness to maximum</td><td>#8</td><td class="c">1.0</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">3.3</td><td>Camera scanner</td><td>Capture a card number from its barcode; graceful absence of a camera</td><td>#9</td><td class="c">1.0</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">3.4</td><td>Instrumented test job</td><td>Emulator job in CI, carrying the permission and camera paths</td><td>#9</td><td class="c">0.5</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">3.5</td><td>CSV export</td><td>Writer, spreadsheet-safe number format, quoting, share sheet as a file</td><td>#10</td><td class="c">0.5</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">3.6</td><td>Icon and splash</td><td>Adaptive icon from the rand-coin mark; launch appearance</td><td>#12</td><td class="c">0.5</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">3.7</td><td>Known defects</td><td>Undo for deletion (DEF-5), retained state holders (DEF-6), formatter allocation (DEF-8)</td><td>—</td><td class="c">0.5</td><td class="c"><span class="pill open">to do</span></td></tr>
+</tbody>
+</table>
+
+<h3>4 — Release <span class="pill open">open</span></h3>
+
+<table>
+<thead><tr><th class="id">WBS</th><th>Work package</th><th>Deliverable</th><th>Issue</th><th class="c">Effort</th><th class="c">State</th></tr></thead>
+<tbody>
+<tr><td class="id">4.1</td><td>Play developer account</td><td>Account created, fee paid, identity verification passed</td><td>#13</td><td class="c">0.25</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">4.2</td><td>Signing</td><td>Upload keystore held outside the repository; release signing configuration</td><td>#13</td><td class="c">0.25</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">4.3</td><td>Release pipeline</td><td>Tag-triggered workflow: run CI, check the tag against the version, build an App Bundle</td><td>#13</td><td class="c">0.5</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">4.4</td><td>Store presence</td><td>Listing copy, screenshots, content rating, data-safety declaration</td><td>#13</td><td class="c">0.5</td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">4.5</td><td>Closed testing</td><td>Twelve testers opted in and held for fourteen continuous days</td><td>#13</td><td class="c">0.25<br><span style="font-size:7.5pt">+ 14 days elapsed</span></td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">4.6</td><td>Production release</td><td>Production access granted and the app published</td><td>#13</td><td class="c">0.25<br><span style="font-size:7.5pt">+ review</span></td><td class="c"><span class="pill open">to do</span></td></tr>
+<tr><td class="id">4.7</td><td>Device verification</td><td>The app run by a person: appearance, font scaling, a barcode at a till</td><td>—</td><td class="c">0.5</td><td class="c"><span class="pill open">to do</span></td></tr>
+</tbody>
+</table>
+
+<table>
+<thead><tr><th>Phase</th><th class="c">Packages</th><th class="c">Effort (ideal days)</th><th class="c">State</th></tr></thead>
+<tbody>
+<tr><td>1 — Foundation</td><td class="c">5</td><td class="c">4.0</td><td class="c"><span class="pill pass">complete</span></td></tr>
+<tr><td>2 — Data and UI</td><td class="c">6</td><td class="c">7.0</td><td class="c"><span class="pill pass">complete</span></td></tr>
+<tr><td>3 — Cards</td><td class="c">7</td><td class="c">5.0</td><td class="c"><span class="pill open">open</span></td></tr>
+<tr><td>4 — Release</td><td class="c">7</td><td class="c">2.5</td><td class="c"><span class="pill open">open</span></td></tr>
+<tr><td><strong>Total</strong></td><td class="c"><strong>25</strong></td><td class="c"><strong>18.5</strong></td><td class="c">11 of 25 remaining</td></tr>
+</tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2>3. Dependencies</h2>
+
+<table>
+<thead><tr><th>Package</th><th>Cannot start until</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>1.2 Shared logic</td><td>1.1</td><td>Needs a module to live in.</td></tr>
+<tr><td>1.3 CI</td><td>1.1</td><td>Needs something to build.</td></tr>
+<tr><td>2.1 Persistence</td><td>1.2</td><td>Entities map onto the domain records.</td></tr>
+<tr><td>2.2, 2.3, 2.4</td><td>2.1</td><td>Screens read through the repositories.</td></tr>
+<tr><td>2.5 Accessibility</td><td>2.2–2.4</td><td>There must be screens to make accessible.</td></tr>
+<tr><td>3.2 Code rendering</td><td>1.2</td><td>The module pattern comes from the ported encoder.</td></tr>
+<tr><td>3.3 Camera scanner</td><td>3.1</td><td>Scanning fills in a field on the card form.</td></tr>
+<tr><td>4.2 Signing</td><td>4.1</td><td>An upload key is registered against an account.</td></tr>
+<tr><td>4.5 Closed testing</td><td>4.1, 4.2, 4.3</td><td>Needs a signed bundle on a track.</td></tr>
+<tr><td>4.6 Production</td><td>4.5 <strong>+ 14 days elapsed</strong></td><td>Play policy, not an estimate.</td></tr>
+<tr><td>4.7 Device verification</td><td>Android Studio installed</td><td>The only task nobody else can do.</td></tr>
+</tbody>
+</table>
+
+<h2>4. Schedule</h2>
+
+<p>Sprints are one week on the project board. Sprints 1 and 2 were completed
+inside the first day, which puts the schedule roughly two weeks ahead of the
+board and leaves the release date governed by something other than
+development.</p>
+
+<table>
+<thead><tr><th>Sprint</th><th>Board dates</th><th>Milestone due</th><th>Actual</th></tr></thead>
+<tbody>
+<tr><td>1 — Foundation</td><td>25 Nov – 1 Dec</td><td>1 Dec</td><td>Complete 25 Nov</td></tr>
+<tr><td>2 — Data and UI</td><td>2 – 8 Dec</td><td>8 Dec</td><td>Complete 25 Nov</td></tr>
+<tr><td>3 — Cards</td><td>9 – 15 Dec</td><td>15 Dec</td><td>Planned 27 Nov – 4 Dec</td></tr>
+<tr><td>4 — Release</td><td>16 – 22 Dec</td><td>22 Dec</td><td>Starts 26 Nov; ends when Play allows</td></tr>
+</tbody>
+</table>
+
+<h3>4.1 Critical path</h3>
+
+<p>The critical path does not run through the code. It runs through Google
+Play: a new personal developer account must run a closed test with at least
+twelve testers opted in for fourteen <em>continuous</em> days before production
+access can even be applied for, and the application for access is then
+reviewed.</p>
+
+<figure>
+<svg viewBox="0 0 700 235" role="img" aria-label="Timeline comparing the two routes to release">
+    <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="#5C5748"/>
+        </marker>
+    </defs>
+
+    <!-- axis -->
+    <line x1="80" y1="208" x2="680" y2="208" stroke="#CFC6B4" stroke-width="1"/>
+    <g font-size="9" fill="#5C5748" text-anchor="middle">
+        <text x="80"  y="223">26 Nov</text>
+        <text x="230" y="223">2 Dec</text>
+        <text x="380" y="223">8 Dec</text>
+        <text x="530" y="223">15 Dec</text>
+        <text x="675" y="223">22 Dec</text>
+    </g>
+    <g stroke="#EBE2CF" stroke-width="1">
+        <line x1="230" y1="26" x2="230" y2="204"/>
+        <line x1="380" y1="26" x2="380" y2="204"/>
+        <line x1="530" y1="26" x2="530" y2="204"/>
+    </g>
+
+    <g font-size="9.5" fill="#1D1B16">
+        <!-- row 1: development -->
+        <text x="8" y="44" font-weight="700">Development</text>
+        <rect x="80" y="34" width="58" height="13" rx="2" fill="#7A5A12"/>
+        <text x="144" y="44" font-size="8.5" fill="#5C5748">fixes, icon</text>
+        <rect x="80" y="52" width="196" height="13" rx="2" fill="#10684F"/>
+        <text x="282" y="62" font-size="8.5" fill="#5C5748">sprint 3: cards, scanner, export — done 4 Dec</text>
+
+        <!-- row 2: play setup -->
+        <text x="8" y="90" font-weight="700">Play setup</text>
+        <rect x="80" y="80" width="34" height="13" rx="2" fill="#434750"/>
+        <text x="120" y="90" font-size="8.5" fill="#5C5748">account + identity verification</text>
+        <rect x="80" y="98" width="46" height="13" rx="2" fill="#B45309"/>
+        <text x="132" y="108" font-size="8.5" fill="#5C5748">keystore, signing, first bundle on a closed track</text>
+
+        <!-- row 3: the gate -->
+        <text x="8" y="136" font-weight="700">The gate</text>
+        <rect x="112" y="126" width="300" height="13" rx="2" fill="#B3246B"/>
+        <text x="418" y="136" font-size="8.5" fill="#B3246B" font-weight="700">14 continuous days, 12 testers</text>
+        <rect x="412" y="144" width="110" height="13" rx="2" fill="#6D28D9"/>
+        <text x="528" y="154" font-size="8.5" fill="#5C5748">review, up to ~7 days</text>
+        <line x1="522" y1="151" x2="560" y2="178" stroke="#5C5748" stroke-width="1" marker-end="url(#arrow)"/>
+        <text x="546" y="192" font-size="9" font-weight="700" fill="#10684F">production, ~16–21 Dec</text>
+
+        <!-- row 4: the board's plan -->
+        <text x="8" y="182" font-weight="700" fill="#B3246B">Board's plan</text>
+        <rect x="530" y="172" width="145" height="11" rx="2" fill="none" stroke="#B3246B" stroke-dasharray="3 2"/>
+        <text x="600" y="168" font-size="8" fill="#B3246B" text-anchor="middle">sprint 4 starts here → misses</text>
+    </g>
+</svg>
+<figcaption>Starting the Play account in sprint 4, as the board has it, puts
+the fourteen-day gate and its review after 22 December. Starting it on day one
+and running it alongside sprint 3 brings production inside the window.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Day</th><th>Owner</th><th>Work</th></tr></thead>
+<tbody>
+<tr><td>Thu 26 Nov</td><td>Owner</td><td>Merge the open stack; install Android Studio; run the app. <strong>Create the Play account and start identity verification.</strong></td></tr>
+<tr><td>Thu 26 Nov</td><td>Development</td><td>4.2 signing, 4.3 release pipeline, 3.6 icon and splash</td></tr>
+<tr><td>Fri 27 Nov</td><td>Both</td><td>Keystore generated; first bundle on a closed track. Begin 3.1 card list and form.</td></tr>
+<tr><td>Sat 28 – Sun 29</td><td>Owner</td><td><strong>Twelve testers opted in — the fourteen-day clock starts.</strong></td></tr>
+<tr><td>Mon 30 Nov</td><td>Development</td><td>3.2 code rendering, 3.3 camera scanner, 3.4 emulator job</td></tr>
+<tr><td>Tue 1 – Wed 2 Dec</td><td>Development</td><td>3.5 CSV export; 3.7 known defects; screenshots</td></tr>
+<tr><td>Thu 3 – Fri 4 Dec</td><td>Both</td><td>4.4 store presence; updated bundle to the track. Sprint 3 complete.</td></tr>
+<tr><td>Mon 7 – Fri 11 Dec</td><td>Both</td><td>Waiting on the gate. Device verification, tester feedback, 1.1 candidates.</td></tr>
+<tr><td>~Fri 12 Dec</td><td>Owner</td><td>Fourteen days elapsed — apply for production access.</td></tr>
+<tr><td>Mon 15 – Mon 21</td><td>Google</td><td>Review.</td></tr>
+<tr><td>Tue 22 Dec</td><td>—</td><td>Sprint 4 closes with the app published.</td></tr>
+</tbody>
+</table>
+
+<h2>5. Assumptions and risks</h2>
+
+<table>
+<thead><tr><th>Risk</th><th class="c">Likelihood</th><th class="c">Impact</th><th>Response</th></tr></thead>
+<tbody>
+<tr><td>Identity verification takes longer than a few days</td><td class="c">Medium</td><td class="c">High</td><td>Start it first, before any release work. It gates everything and depends on no code.</td></tr>
+<tr><td>Fewer than twelve testers can be found and held</td><td class="c">Medium</td><td class="c">High</td><td>Recruit early and over-recruit; a tester who opts out resets their fourteen days.</td></tr>
+<tr><td>Production review overruns</td><td class="c">Medium</td><td class="c">Medium</td><td>Accept. The app is complete and installable from a closed track regardless.</td></tr>
+<tr><td>No physical device for the camera scanner</td><td class="c">Low</td><td class="c">Medium</td><td>An emulator cannot test a camera. Ship the typed path and mark scanning verified only when a device confirms it.</td></tr>
+<tr><td>The app looks wrong once it is finally seen</td><td class="c">Medium</td><td class="c">Medium</td><td>Run it on 26 November, before sprint 3 builds four more screens on the same theme.</td></tr>
+<tr><td>Owner's time, not development time, becomes the constraint</td><td class="c">High</td><td class="c">Medium</td><td>Already true. Every verification and every Play step is owner-only; sequence those first and let development fill the gaps.</td></tr>
+</tbody>
+</table>
+
+<div class="note">
+    <span class="label">If only a private release is wanted</span>
+    <p>Closed and internal testing tracks carry no twelve-tester requirement and
+    no production review. If "published" means "installable from Play on my own
+    phone", the project finishes in early December and phase 4 collapses to
+    packages 4.1 through 4.3. The fourteen-day gate exists only for a public
+    production listing.</p>
+</div>
+
+<footer class="doc">
+    Zaka for Android — Work Breakdown Structure v1.0 · 25 November 2026 ·
+    github.com/Jabulile1704/Zaka-Android
+</footer>
+
+</body>
+</html>
