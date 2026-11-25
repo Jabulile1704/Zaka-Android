@@ -10,6 +10,7 @@ import com.jabulile.zaka.core.SpendSlice
 import com.jabulile.zaka.data.BreakdownStyle
 import com.jabulile.zaka.data.ExpenseRepository
 import com.jabulile.zaka.data.ZakaPreferences
+import java.time.Clock
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
@@ -36,9 +37,15 @@ data class InsightsUiState(
 class InsightsViewModel(
     private val expenses: ExpenseRepository,
     private val preferences: ZakaPreferences,
-    private val zone: ZoneId = ZoneId.systemDefault(),
+    zone: ZoneId = ZoneId.systemDefault(),
+    /**
+     * One clock, read in several places. Taking "now" from the system five
+     * separate times meant the month being shown, the month allowed and the
+     * divisor for the daily rate could each disagree across a boundary.
+     */
+    private val clock: Clock = Clock.system(zone),
 ) : ViewModel() {
-    private val month = MutableStateFlow(YearMonth.now(zone))
+    private val month = MutableStateFlow(YearMonth.now(clock))
     private val style = MutableStateFlow(preferences.breakdownStyle)
 
     val state: StateFlow<InsightsUiState> =
@@ -54,13 +61,13 @@ class InsightsViewModel(
                 perDay = total / daysCounted(month),
                 slices = SpendBreakdown.slices(totals),
                 style = style,
-                canGoForward = month < YearMonth.now(zone),
+                canGoForward = month < YearMonth.now(clock),
                 loaded = true,
             )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
-            initialValue = InsightsUiState(month = YearMonth.now(zone), style = style.value),
+            initialValue = InsightsUiState(month = YearMonth.now(clock), style = style.value),
         )
 
     fun previousMonth() {
@@ -68,7 +75,7 @@ class InsightsViewModel(
     }
 
     fun nextMonth() {
-        if (month.value < YearMonth.now(zone)) month.value = month.value.plusMonths(1)
+        if (month.value < YearMonth.now(clock)) month.value = month.value.plusMonths(1)
     }
 
     fun styleChosen(chosen: BreakdownStyle) {
@@ -82,7 +89,7 @@ class InsightsViewModel(
      * only the days that have happened.
      */
     private fun daysCounted(month: YearMonth): Int {
-        val today = LocalDate.now(zone)
+        val today = LocalDate.now(clock)
         return if (month == YearMonth.from(today)) today.dayOfMonth else month.lengthOfMonth()
     }
 

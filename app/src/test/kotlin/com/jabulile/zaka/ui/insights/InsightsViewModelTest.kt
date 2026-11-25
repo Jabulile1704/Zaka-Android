@@ -9,6 +9,7 @@ import com.jabulile.zaka.data.BreakdownStyle
 import com.jabulile.zaka.data.ExpenseRepository
 import com.jabulile.zaka.data.ZakaDatabase
 import com.jabulile.zaka.data.ZakaPreferences
+import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
@@ -35,6 +36,17 @@ import org.robolectric.RobolectricTestRunner
 class InsightsViewModelTest {
     private val zone: ZoneId = ZoneId.of("Africa/Johannesburg")
 
+    /**
+     * A fixed "now". With the system clock these assertions depended on which
+     * month the suite happened to run in, and on "now" being read identically
+     * in five places.
+     */
+    private val today: LocalDate = LocalDate.of(2026, 11, 25)
+    private val clock: Clock = Clock.fixed(
+        today.atTime(12, 0).atZone(zone).toInstant(),
+        zone,
+    )
+
     private lateinit var database: ZakaDatabase
     private lateinit var expenses: ExpenseRepository
     private lateinit var preferences: ZakaPreferences
@@ -59,7 +71,6 @@ class InsightsViewModelTest {
 
     @Test
     fun `this month totals what was logged in it`() = runTest {
-        val today = LocalDate.now(zone)
         expenses.save(expense(100.0, ExpenseCategory.GROCERIES, today))
         expenses.save(expense(50.0, ExpenseCategory.GROCERIES, today))
         expenses.save(expense(25.0, ExpenseCategory.AIRTIME, today))
@@ -75,7 +86,6 @@ class InsightsViewModelTest {
 
     @Test
     fun `the daily rate counts the days that have happened, not the whole month`() = runTest {
-        val today = LocalDate.now(zone)
         expenses.save(expense(100.0, ExpenseCategory.RENT, today))
 
         val state = viewModel().state.filter { it.loaded }.first()
@@ -85,7 +95,6 @@ class InsightsViewModelTest {
 
     @Test
     fun `stepping back shows another month and cannot step past this one`() = runTest {
-        val today = LocalDate.now(zone)
         val lastMonth = today.minusMonths(1).withDayOfMonth(1)
         expenses.save(expense(100.0, ExpenseCategory.RENT, today))
         expenses.save(expense(40.0, ExpenseCategory.WIFI, lastMonth))
@@ -96,7 +105,7 @@ class InsightsViewModelTest {
         model.previousMonth()
         val previous = model.state.filter { it.month == YearMonth.from(lastMonth) }.first()
         assertEquals(40.0, previous.total, 1e-9)
-        assertTrue(previous.canGoForward)
+        assertTrue("October can step forward to November", previous.canGoForward)
 
         model.nextMonth()
         val back = model.state.filter { it.month == YearMonth.from(today) }.first()
@@ -131,7 +140,7 @@ class InsightsViewModelTest {
         )
     }
 
-    private fun viewModel() = InsightsViewModel(expenses, preferences, zone)
+    private fun viewModel() = InsightsViewModel(expenses, preferences, zone, clock)
 
     private fun expense(amount: Double, category: ExpenseCategory, on: LocalDate): Expense {
         val moment: Instant = on.atTime(12, 0).atZone(zone).toInstant()
