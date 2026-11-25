@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The expense database is the only copy of the data, so it is included in
+  device backups deliberately. Nothing else here is worth restoring.
+-->
+<full-backup-content>
+    <include domain="database" path="." />
+</full-backup-content>
