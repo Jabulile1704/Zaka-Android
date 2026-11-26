@@ -1,5 +1,7 @@
 # Zaka for Android
 
+<img src="docs/icon.png" alt="The Zaka launcher icon: a two-tone rand coin with a nickel ring, a milled edge and a brass centre carrying an R, shown under a circle mask, a squircle mask, at small sizes and as a themed monochrome icon." width="620">
+
 A personal expense tracker for Android, in Kotlin and Jetpack Compose.
 Everything is stored on the device — no account, no network, nothing leaves
 the phone.
@@ -57,6 +59,8 @@ Studio installs both. `minSdk` is 26 (Android 8.0).
 ## Layout
 
 ```
+tools/
+  generate_icon.py          Draws the launcher icon and writes the vector drawables
 settings.gradle.kts         The two modules
 gradle/libs.versions.toml   Every dependency version, in one place
 core/                       Pure Kotlin. No Android, no Compose, no Room.
