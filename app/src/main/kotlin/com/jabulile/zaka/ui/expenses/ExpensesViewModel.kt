@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.jabulile.zaka.core.CsvExport
+import com.jabulile.zaka.core.CsvFile
 import com.jabulile.zaka.core.DayGroup
 import com.jabulile.zaka.data.ExpenseRepository
 import java.time.Clock
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -35,6 +38,8 @@ data class ExpensesUiState(
      */
     val today: LocalDate,
     val loaded: Boolean = false,
+    /** Set when an export is ready for the share sheet. */
+    val export: CsvFile? = null,
 )
 
 class ExpensesViewModel(
@@ -53,6 +58,8 @@ class ExpensesViewModel(
      * `WhileSubscribed` restarts this block when the screen is observed again,
      * so returning to the app after midnight re-reads both.
      */
+    private val pending = MutableStateFlow<CsvFile?>(null)
+
     val state: StateFlow<ExpensesUiState> =
         flow {
             val today = LocalDate.now(clock)
@@ -60,12 +67,14 @@ class ExpensesViewModel(
                 combine(
                     expenses.observeDays(),
                     expenses.observeMonthTotal(YearMonth.from(today)),
-                ) { days, monthTotal ->
+                    pending,
+                ) { days, monthTotal, export ->
                     ExpensesUiState(
                         days = days,
                         monthTotal = monthTotal,
                         today = today,
                         loaded = true,
+                        export = export,
                     )
                 },
             )
@@ -77,6 +86,19 @@ class ExpensesViewModel(
 
     fun delete(id: Long) {
         viewModelScope.launch { expenses.delete(id) }
+    }
+
+    /**
+     * Everything logged, as CSV. Built from the state the screen already
+     * holds rather than from a second query: the list is the whole table.
+     */
+    fun export() {
+        val all = state.value.days.flatMap { it.expenses }
+        pending.value = CsvExport.expenses(all, zone, LocalDate.now(clock))
+    }
+
+    fun exportShared() {
+        pending.value = null
     }
 
     companion object {

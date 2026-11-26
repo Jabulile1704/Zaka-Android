@@ -50,6 +50,7 @@ fun ExpensesScreen(
     onEdit: (Long) -> Unit,
     onDelete: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    onExport: () -> Unit = {},
 ) {
     if (state.loaded && state.days.isEmpty()) {
         EmptyExpenses(modifier = modifier.fillMaxSize())
@@ -69,6 +70,36 @@ fun ExpensesScreen(
                 )
             }
         }
+
+        item(key = "export") { ExportRow(onExport = onExport) }
+    }
+}
+
+/**
+ * At the end of the list rather than behind an icon in a bar the app does not
+ * have. Exporting is rare and deliberate, and the bottom of everything you
+ * have recorded is a reasonable place to be offered a copy of it.
+ */
+@Composable
+private fun ExportRow(onExport: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onExport)
+            .padding(horizontal = 16.dp, vertical = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = ZakaIcons.Export,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+        )
+        Text(
+            text = stringResource(R.string.export_expenses),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
     }
 }
 

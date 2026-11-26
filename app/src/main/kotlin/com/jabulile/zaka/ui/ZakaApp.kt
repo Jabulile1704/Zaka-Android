@@ -36,6 +36,7 @@ import com.jabulile.zaka.data.ExpenseRepository
 import com.jabulile.zaka.data.LoyaltyCardRepository
 import com.jabulile.zaka.data.ZakaPreferences
 import com.jabulile.zaka.ui.components.MoneyText
+import com.jabulile.zaka.ui.components.ShareCsvWhenRequested
 import com.jabulile.zaka.ui.components.ZakaIcons
 import com.jabulile.zaka.ui.expenses.ExpensesScreen
 import com.jabulile.zaka.ui.expenses.ExpensesViewModel
@@ -125,6 +126,18 @@ fun ZakaApp(
         viewModel(factory = ExpensesViewModel.factory(expenses))
     val expensesState by expensesViewModel.state.collectAsStateWithLifecycle()
 
+    val chooserTitle = stringResource(R.string.export_chooser)
+    ShareCsvWhenRequested(
+        file = expensesState.export,
+        chooserTitle = chooserTitle,
+        onShared = expensesViewModel::exportShared,
+    )
+    ShareCsvWhenRequested(
+        file = cardsState.export,
+        chooserTitle = chooserTitle,
+        onShared = cardsViewModel::exportShared,
+    )
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
@@ -152,6 +165,7 @@ fun ZakaApp(
                 onEdit = { editing = it },
                 onDelete = expensesViewModel::delete,
                 modifier = content,
+                onExport = expensesViewModel::export,
             )
 
             ZakaTab.ADD -> AddExpense(
@@ -172,6 +186,7 @@ fun ZakaApp(
                 onDelete = cardsViewModel::delete,
                 onAdd = { addingCard = true },
                 modifier = content,
+                onExport = cardsViewModel::export,
             )
         }
     }
