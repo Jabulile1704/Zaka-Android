@@ -540,3 +540,16 @@ rare action would cost a fifth of the screen on every screen. Exporting is
 deliberate and infrequent, and the bottom of everything you have recorded is a
 reasonable place to be offered a copy of it — the same pattern as the row that
 adds a card.
+
+### The donut is a fixed size, not the width of the screen
+
+Filling the width made it as tall as it was wide — over a thousand pixels on a
+phone — and pushed the legend off the bottom. The legend is where the colours
+are named, so a chart that hides it is a chart that cannot be read by anyone
+who has to distinguish teal from cyan.
+
+220dp, centred. Everything then fits on one screen without scrolling, which is
+how the layout was described in the sketch and not how it first came out.
+
+Found by running the app. No test would have caught it: the arithmetic the
+chart draws was already correct.

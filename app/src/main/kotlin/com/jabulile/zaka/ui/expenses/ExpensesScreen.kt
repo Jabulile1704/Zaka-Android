@@ -173,7 +173,13 @@ private fun ExpenseRow(
                     )
                 },
             headlineContent = { Text(expense.title) },
-            supportingContent = { Text(expense.category.label) },
+            // Only when there is a note to be the headline. Without this an
+            // expense with no note reads "Airtime" above "Airtime".
+            supportingContent = if (expense.hasNote) {
+                { Text(expense.category.label) }
+            } else {
+                null
+            },
             leadingContent = { CategoryMark(category = expense.category) },
             trailingContent = {
                 MoneyText(

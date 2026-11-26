@@ -11,6 +11,15 @@ Same app, same information architecture, Android's own design language.
 
 [![CI](https://github.com/Jabulile1704/Zaka-Android/actions/workflows/ci.yml/badge.svg)](https://github.com/Jabulile1704/Zaka-Android/actions/workflows/ci.yml)
 
+## What it looks like
+
+| Expenses | Add | Insights | Cards |
+|:--:|:--:|:--:|:--:|
+| <img src="docs/screenshots/expenses.png" width="200" alt="A list of expenses grouped by day. Today and Yesterday are named rather than dated, each heading carries that day's total, and each row shows a coloured category mark, the note, the category and the amount in rand."> | <img src="docs/screenshots/add.png" width="200" alt="The add-expense form. A large rand amount field at the top showing 45,50, then date and note, then a grid of sixteen category chips, two to a row, with Transport selected."> | <img src="docs/screenshots/insights.png" width="200" alt="Monthly insights. November 2026 with a total of R10,381.50 above a donut chart, and a legend listing Rent at 36 percent, Groceries at 21 percent and four more rows including a merged plus-six-more."> | <img src="docs/screenshots/cards.png" width="200" alt="A loyalty card shown full screen as an EAN-13 barcode in black on white, with the card number printed underneath and a Barcode and QR code switch."> |
+| Grouped by day with a per-day total. Tap a row to edit, swipe to delete. The strip above the tab bar always shows the month to date. | Amount, date, note and one of sixteen categories. Both a comma and a dot are the decimal point. | Month total, spend per day so far, and where the money went — as a donut or as bars. | Shop cards, so the plastic can stay at home. Full brightness while the code is up. |
+
+Screenshots are from a seeded emulator, not real spending.
+
 ## Where this is
 
 **Sprint 1 of 4 — Foundation.** The project builds, the logic that the two

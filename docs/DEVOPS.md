@@ -62,17 +62,29 @@ except Gradle itself, which is in the wrapper.
 AGP 9 enables built-in Kotlin, so there is no `kotlin-android` plugin to keep
 in step. See [DECISIONS.md](DECISIONS.md).
 
-## Honest state of verification
+## State of verification
 
-**Nothing in sprint 1 has been built on a developer machine.** The machine
-this was written on has no JDK, no Gradle and no Android SDK, so CI is the
-first and only thing that has compiled this code.
+**It has now been built and run.** Android Studio on the development machine,
+Gradle on JDK 25, the app installed on an API 37 emulator with a seeded month
+of data, and every screen walked through.
 
-That is a real gap, not a stylistic one: a green CI run proves the project
-assembles and the logic tests pass, and proves nothing at all about how the
-app looks or behaves on a device. The theme has not been seen on a screen.
+Until that point CI was the only thing that had ever compiled this code, and
+the gap was real rather than stylistic. Running it found two defects in one
+sitting that 126 passing tests had not:
 
-The first thing to do on a machine with Android Studio is run it and look.
+- An expense with no note rendered its category twice, once as the headline
+  and once as the supporting line — "Airtime" above "Airtime".
+- The donut filled the width, which made it as tall as it was wide and pushed
+  the legend off the bottom of the screen. The legend is the half that names
+  the colours.
+
+Both are fixed and were confirmed fixed on the device. Neither is the kind of
+thing a test would have caught, because both suites were asserting what the
+code computes rather than what it draws.
+
+**Still unverified:** a barcode read by a real till scanner, the brightness
+override on real hardware, text at a 200% font scale, and performance with
+more than a seeded month of data.
 
 ## Releases
 
