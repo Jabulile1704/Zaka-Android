@@ -8,7 +8,6 @@
     <string name="tab_cards">Cards</string>
 
     <string name="month_to_date">This month</string>
-    <string name="coming_this_sprint">Not built yet.</string>
 
     <string name="expense_edit_action">Edit this expense</string>
     <string name="expense_delete_action">Delete this expense</string>
@@ -33,4 +32,23 @@
     <string name="insights_previous_month">Previous month</string>
     <string name="insights_next_month">Next month</string>
     <string name="insights_empty">Nothing logged in this month.</string>
+
+    <string name="card_add">Add a card</string>
+    <string name="card_name">Shop</string>
+    <string name="card_number">Card number</string>
+    <string name="card_number_hint">Type it, or scan the barcode once that arrives.</string>
+    <string name="card_number_undrawable">This number cannot be drawn as %1$s.</string>
+    <string name="card_type">Barcode type</string>
+    <string name="card_colour">Colour</string>
+    <string name="card_colour_swatch">Colour %1$s</string>
+    <string name="card_preview_description">Preview of this card\'s code</string>
+    <string name="card_last_four">Ends %1$s</string>
+    <string name="card_show_action">Show this card at a till</string>
+    <string name="card_edit_action">Edit this card</string>
+    <string name="card_delete_action">Delete this card</string>
+    <string name="card_code_description">%1$s for %2$s. Hold the screen up to the scanner.</string>
+    <string name="card_cannot_draw">This number cannot be drawn as a code. Read it to the cashier instead.</string>
+    <string name="card_done">Done</string>
+    <string name="cards_empty_title">No cards yet</string>
+    <string name="cards_empty_body">Add a shop card and the plastic can stay at home.</string>
 </resources>

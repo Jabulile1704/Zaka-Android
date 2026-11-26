@@ -27,7 +27,10 @@ ViewModels and Room each have an opinion about where state lives.
 ```
 
 The arrow never reverses. `:core` has no dependency on Android, Compose or
-Room — not even on `androidx.annotation` — so:
+Room — not even on `androidx.annotation`. Its one dependency is
+`com.google.zxing:core`, which is plain Java with no transitive dependencies
+of its own, because encoding a Code 128 or a QR is logic and belongs where
+logic is tested. So:
 
 - `./gradlew :core:test` needs a JDK and nothing else: no SDK, no emulator,
   seconds to run.
