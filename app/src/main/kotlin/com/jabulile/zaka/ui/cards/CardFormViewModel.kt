@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.jabulile.zaka.core.BarcodeSymbology
 import com.jabulile.zaka.core.CardTint
 import com.jabulile.zaka.core.LoyaltyCard
+import com.jabulile.zaka.core.Scanned
 import com.jabulile.zaka.data.LoyaltyCardRepository
 import java.time.Clock
 import java.time.Instant
@@ -86,6 +87,19 @@ class CardFormViewModel(
             } else {
                 BarcodeSymbology.detected(number)
             },
+        )
+    }
+
+    /**
+     * A scan fills in the number and, when the scanner recognised the format,
+     * fixes the type too — a reader that says "this was an EAN-13" is better
+     * evidence than guessing from the digits, so it counts as chosen.
+     */
+    fun scanned(result: Scanned) = _state.update {
+        it.copy(
+            number = result.number,
+            symbology = result.symbology ?: BarcodeSymbology.detected(result.number),
+            symbologyChosenByHand = result.symbology != null,
         )
     }
 

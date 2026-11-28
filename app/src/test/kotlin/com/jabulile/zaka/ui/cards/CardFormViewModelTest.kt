@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.jabulile.zaka.core.BarcodeSymbology
 import com.jabulile.zaka.core.LoyaltyCard
+import com.jabulile.zaka.core.Scanned
 import com.jabulile.zaka.data.LoyaltyCardRepository
 import com.jabulile.zaka.data.ZakaDatabase
 import java.time.Instant
@@ -189,6 +190,34 @@ class CardFormViewModelTest {
     @Test
     fun `editing a card that has gone closes the form`() = runTest {
         assertTrue(editing(404).state.filter { it.loaded }.first().finished)
+    }
+
+    @Test
+    fun `a scan fills the number and fixes the type it recognised`() = runTest {
+        val form = adding()
+        form.scanned(Scanned(number = ean, symbology = BarcodeSymbology.EAN13))
+
+        assertEquals(ean, form.state.value.number)
+        assertEquals(BarcodeSymbology.EAN13, form.state.value.symbology)
+
+        // The reader said what it read, so typing must not second-guess it.
+        form.numberChanged("12345")
+        assertEquals(BarcodeSymbology.EAN13, form.state.value.symbology)
+    }
+
+    @Test
+    fun `a scan of a kind we do not store still fills the number`() = runTest {
+        val form = adding()
+        // An EAN-8 or a UPC-A comes back with no symbology of ours.
+        form.scanned(Scanned(number = "12345670", symbology = null))
+
+        assertEquals("12345670", form.state.value.number)
+        assertEquals(
+            "so the type is guessed from the digits as usual",
+            BarcodeSymbology.CODE128,
+            form.state.value.symbology,
+        )
+        assertFalse(form.state.value.symbologyChosenByHand)
     }
 
     /** Same reason as the expense form: the write outlives the call. */
