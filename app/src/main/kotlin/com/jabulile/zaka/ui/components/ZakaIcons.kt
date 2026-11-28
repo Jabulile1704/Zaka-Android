@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.Flight
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Home
@@ -43,6 +44,7 @@ object ZakaIcons {
     val Cards: ImageVector = Icons.Filled.CardMembership
 
     val Delete: ImageVector = Icons.Filled.Delete
+    val Export: ImageVector = Icons.Filled.FileDownload
     val Close: ImageVector = Icons.Filled.Close
     val Save: ImageVector = Icons.Filled.Check
     val Previous: ImageVector = Icons.Filled.ChevronLeft

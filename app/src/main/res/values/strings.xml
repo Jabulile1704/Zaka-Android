@@ -51,4 +51,8 @@
     <string name="card_done">Done</string>
     <string name="cards_empty_title">No cards yet</string>
     <string name="cards_empty_body">Add a shop card and the plastic can stay at home.</string>
+
+    <string name="export_expenses">Export everything as CSV</string>
+    <string name="export_cards">Export cards as CSV</string>
+    <string name="export_chooser">Share your Zaka export</string>
 </resources>

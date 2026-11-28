@@ -22,6 +22,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -89,6 +91,29 @@ class ExpensesViewModelTest {
         assertEquals(
             0,
             viewModel.state.filter { it.loaded && it.days.isEmpty() }.first().days.size,
+        )
+    }
+
+    @Test
+    fun `exporting offers every expense, oldest first, and then clears`() = runTest {
+        repository.save(expense(100.0, ExpenseCategory.RENT, Instant.parse("2026-11-21T10:00:00Z")))
+        repository.save(expense(40.0, ExpenseCategory.WIFI, Instant.parse("2026-11-23T10:00:00Z")))
+        viewModel.state.filter { it.loaded }.first()
+
+        viewModel.export()
+
+        val csv = viewModel.state.filter { it.export != null }.first().export!!
+        val lines = csv.text.trimEnd('\n').split("\n")
+        assertEquals("Date,Category,Note,Amount", lines[0])
+        assertEquals(3, lines.size)
+        assertTrue("oldest first", lines[1].contains("100.00"))
+        assertTrue(lines[2].contains("40.00"))
+        assertTrue(csv.name.startsWith("Zaka-expenses-"))
+
+        viewModel.exportShared()
+        assertNull(
+            "the share sheet must not reopen on the next recomposition",
+            viewModel.state.filter { it.export == null }.first().export,
         )
     }
 

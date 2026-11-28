@@ -491,3 +491,65 @@ Showing a card sets the window to full brightness and keeps the screen awake,
 because till scanners struggle with a dim display and a counter is exactly
 where the screen would otherwise sleep. Both are restored when the card
 closes, so the phone's own settings are untouched afterwards.
+
+### The export is byte-for-byte the iOS one, plus cards
+
+[#10](../../issues/10)
+
+Same columns, same always-quoted text fields with embedded quotes doubled,
+same `yyyy-MM-dd HH:mm` stamps, same two-decimal amounts, same newline
+endings and trailing newline. For the same data the two files are identical,
+so they can be compared or concatenated.
+
+Minimal quoting — quoting only fields that contain a comma or a quote — would
+be equally valid CSV and slightly smaller. It is rejected because then whether
+a row is quoted depends on what somebody typed in a note, and the two exports
+stop being comparable.
+
+Cards are the one addition. The iOS export omits them
+([Zaka#27](https://github.com/Jabulile1704/Zaka/issues/27)), with columns
+`Shop,Number,Type,Added`. Card numbers are quoted like any other text field,
+which is what stops a spreadsheet eating the leading zeros off `0001234`.
+
+### Amounts are formatted with `Locale.US`, not the device's
+
+`String.format(Locale.US, "%.2f", amount)`. On a phone set to a
+comma-decimal locale — which includes most of South Africa's — the default
+would write 45.50 as `45,50` and the CSV would silently gain a column.
+
+This is the export side of the rule the display already follows, and the
+reason the two formats are allowed to differ at all: `R1,234.56` imports into
+a spreadsheet as text that cannot be summed. The export is for machines.
+
+### The export leaves as a file, never as text **(ported)**
+
+The iOS app shipped this as raw data first, and most share targets refused to
+appear at all, because anything that attaches a document wants a file
+([Zaka#12](https://github.com/Jabulile1704/Zaka/issues/12)).
+
+The Android equivalent of that mistake is `EXTRA_TEXT`, which would paste a
+thousand lines of CSV into an email body. So the CSV is written to one folder
+in the cache and shared as a content URI through a `FileProvider` with a
+one-shot read grant. The provider is not exported and its paths cover that
+folder only, so nothing can reach anything else of the app's.
+
+### Export is a row at the end of a list, not a button in a bar
+
+The app has no top app bar to put an icon in, and adding one to hold a single
+rare action would cost a fifth of the screen on every screen. Exporting is
+deliberate and infrequent, and the bottom of everything you have recorded is a
+reasonable place to be offered a copy of it — the same pattern as the row that
+adds a card.
+
+### The donut is a fixed size, not the width of the screen
+
+Filling the width made it as tall as it was wide — over a thousand pixels on a
+phone — and pushed the legend off the bottom. The legend is where the colours
+are named, so a chart that hides it is a chart that cannot be read by anyone
+who has to distinguish teal from cyan.
+
+220dp, centred. Everything then fits on one screen without scrolling, which is
+how the layout was described in the sketch and not how it first came out.
+
+Found by running the app. No test would have caught it: the arithmetic the
+chart draws was already correct.

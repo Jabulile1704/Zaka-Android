@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -219,13 +218,19 @@ private fun SpendDonut(
     val colors = slices.map { it.category?.color ?: mergedColor }
     val sweep = SpendBreakdown.sweep(slices, progress.toDouble())
 
+    // Sized, not full width. Filling the width made the donut as tall as it
+    // was wide and pushed the legend off the bottom of the screen, which is
+    // the half that names the colours.
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(1f)
-            .padding(24.dp),
+            .padding(vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
+        Box(
+            modifier = Modifier.size(DONUT_SIZE),
+            contentAlignment = Alignment.Center,
+        ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val thickness = 32.dp.toPx()
             val diameter = min(size.width, size.height) - thickness
@@ -267,8 +272,11 @@ private fun SpendDonut(
             style = MaterialTheme.typography.titleLarge,
             rounded = true,
         )
+        }
     }
 }
+
+private val DONUT_SIZE = 220.dp
 
 @Composable
 private fun Legend(

@@ -44,6 +44,7 @@ fun CardsScreen(
     onDelete: (Long) -> Unit,
     onAdd: () -> Unit,
     modifier: Modifier = Modifier,
+    onExport: () -> Unit = {},
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -64,6 +65,33 @@ fun CardsScreen(
         }
 
         item { AddCardRow(onAdd = onAdd) }
+
+        if (state.cards.isNotEmpty()) {
+            item { ExportCardsRow(onExport = onExport) }
+        }
+    }
+}
+
+@Composable
+private fun ExportCardsRow(onExport: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(onClick = onExport)
+            .padding(horizontal = 4.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = ZakaIcons.Export,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+        )
+        Text(
+            text = stringResource(R.string.export_cards),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
     }
 }
 

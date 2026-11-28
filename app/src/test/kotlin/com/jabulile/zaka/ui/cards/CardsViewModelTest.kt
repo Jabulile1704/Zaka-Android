@@ -73,6 +73,22 @@ class CardsViewModelTest {
         assertTrue(viewModel.state.filter { it.loaded && it.cards.isEmpty() }.first().cards.isEmpty())
     }
 
+    @Test
+    fun `exporting offers the cards the iOS app has never exported`() = runTest {
+        cards.save(card("Clicks", Instant.parse("2026-11-01T06:00:00Z")))
+        viewModel.state.filter { it.loaded }.first()
+
+        viewModel.export()
+
+        val csv = viewModel.state.filter { it.export != null }.first().export!!
+        assertTrue(csv.text.startsWith("Shop,Number,Type,Added"))
+        assertTrue(csv.text.contains("\"Clicks\""))
+        assertTrue(csv.name.startsWith("Zaka-cards-"))
+
+        viewModel.exportShared()
+        assertTrue(viewModel.state.filter { it.export == null }.first().export == null)
+    }
+
     private fun card(name: String, addedAt: Instant) = LoyaltyCard(
         name = name,
         number = "6001087001618",
