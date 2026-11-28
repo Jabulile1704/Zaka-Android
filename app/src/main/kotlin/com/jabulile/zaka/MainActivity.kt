@@ -16,7 +16,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ZakaTheme {
-                ZakaApp(expenses = zaka.expenses, cards = zaka.cards)
+                ZakaApp(
+                    expenses = zaka.expenses,
+                    cards = zaka.cards,
+                    preferences = zaka.preferences,
+                )
             }
         }
     }

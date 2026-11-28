@@ -4,6 +4,7 @@ import android.app.Application
 import com.jabulile.zaka.data.ExpenseRepository
 import com.jabulile.zaka.data.LoyaltyCardRepository
 import com.jabulile.zaka.data.ZakaDatabase
+import com.jabulile.zaka.data.ZakaPreferences
 
 /**
  * Where the one database and the two repositories live.
@@ -18,4 +19,6 @@ class ZakaApplication : Application() {
     val expenses: ExpenseRepository by lazy { ExpenseRepository(database.expenses()) }
 
     val cards: LoyaltyCardRepository by lazy { LoyaltyCardRepository(database.cards()) }
+
+    val preferences: ZakaPreferences by lazy { ZakaPreferences(this) }
 }

@@ -24,4 +24,12 @@
     <string name="form_update">Update</string>
     <string name="form_cancel">Cancel</string>
     <string name="form_delete">Delete this expense</string>
+
+    <string name="insights_total">Total</string>
+    <string name="insights_per_day">Per day</string>
+    <string name="insights_donut">Donut</string>
+    <string name="insights_bars">Bars</string>
+    <string name="insights_previous_month">Previous month</string>
+    <string name="insights_next_month">Next month</string>
+    <string name="insights_empty">Nothing logged in this month.</string>
 </resources>
