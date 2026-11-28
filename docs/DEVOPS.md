@@ -11,8 +11,8 @@ to `main`, every pull request, and on demand.
 
 | Job | Does | Fails when |
 | --- | --- | --- |
-| **Logic tests** | `./gradlew :core:test` — 42 tests | Amount parsing, EAN-13, grouping or the breakdown breaks |
-| **App build and unit tests** | `assembleDebug`, `testDebugUnitTest`, then `assembleRelease` | The app stops compiling, or R8 chokes on the release variant |
+| **Logic tests** | `./gradlew :core:test` — 49 tests | Amount parsing, EAN-13, grouping, month windows or the breakdown breaks |
+| **App build and unit tests** | `assembleDebug`, `testDebugUnitTest` — 23 tests — then `assembleRelease` | The app stops compiling, the store or its mapping breaks, or R8 chokes on the release variant |
 
 Both run on `ubuntu-latest` and sign nothing, so no keystore and no
 credentials live in the repository.
@@ -26,12 +26,15 @@ explicitly instead of trusting whatever the runner image happens to ship.
 Both jobs print their toolchain first, so a runner image refresh fails
 visibly rather than mysteriously.
 
+The app job's unit tests include the Room database itself, run in memory on
+the JVM under Robolectric. That is deliberate: see
+[DECISIONS.md](DECISIONS.md).
+
 **Not yet in CI:** Android lint, and instrumented tests on an emulator. Lint
 joins the pipeline with the accessibility work
-([#14](../../issues/14)), where its checks actually earn their runtime.
-Instrumented tests wait until there is a Room database and a screen worth
-driving ([#4](../../issues/4), [#5](../../issues/5)) — an emulator job that
-asserts nothing is just a slow way to pass.
+([#14](../../issues/14)), where its checks actually earn their runtime. An
+emulator job waits for the thing that genuinely needs a device, which is the
+camera scanner ([#9](../../issues/9)).
 
 ## Toolchain
 
@@ -44,6 +47,7 @@ except Gradle itself, which is in the wrapper.
 | Android Gradle plugin | 9.5.2 | `libs.versions.toml` |
 | Kotlin | 2.4.21 | `libs.versions.toml` |
 | Compose BOM | 2026.11.01 | `libs.versions.toml` |
+| Room | 2.8.5, processed by KSP 2.3.14 | `libs.versions.toml` |
 | JDK | 21 in CI, 17 minimum | `ci.yml`, `compileOptions` |
 | compileSdk | 37.1 — Compose 1.13 requires it | `app/build.gradle.kts` |
 | targetSdk | 37 | `app/build.gradle.kts` |

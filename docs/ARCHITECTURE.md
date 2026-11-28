@@ -14,7 +14,7 @@ ViewModels and Room each have an opinion about where state lives.
         │  :app   Android, Compose, Room           │
         │                                          │
         │  ui/        screens, theme, components   │
-        │  data/      Room entities, DAOs, mappers │  (sprint 2)
+        │  data/      Room entities, DAOs, mappers │
         └───────────────────┬──────────────────────┘
                             │  depends on
                             ▼
@@ -45,14 +45,14 @@ This mirrors the iOS split, where a Swift package held the same pure logic so
 | --- | --- | --- |
 | A rule about money, dates, barcodes or grouping | `:core` | `:core:test` |
 | A record the app reasons about | `:core` | `:core:test` |
-| A Room entity, DAO or mapper | `:app/data` | instrumented test |
+| A Room entity, DAO or mapper | `:app/data` | `:app:testDebugUnitTest`, Robolectric |
 | A screen, a component, the theme | `:app/ui` | Compose UI test |
 | A state holder for one screen | `:app/ui`, as a ViewModel | `:app:testDebugUnitTest` |
 
 If a rule is hard to test because it needs a `Context`, that is usually a
 sign the rule belongs in `:core` and only its *input* needs Android.
 
-## Layers inside `:app` (sprint 2 onward)
+## Layers inside `:app`
 
 ```
 Composable  ──reads──▶  UiState (immutable)
@@ -78,6 +78,10 @@ Four rules, decided now so sprint 2 does not have to argue about them:
    app twice: the database column stays a string, so renaming or retiring a
    category cannot re-map rows that are already saved.
 
+The repositories are where rules 2 and 4 meet. `ExpenseRepository.observeDays()`
+returns `Flow<List<DayGroup>>` — already bucketed, already totalled — rather
+than rows for a composable to fold on every recomposition.
+
 ## What the categories are, and are not
 
 `ExpenseCategory` lives in `:core`, so it cannot hold a Compose `Color` or an
@@ -102,7 +106,7 @@ work, so there is no scheduler, no WorkManager and nothing to retry.
 | Not here | Why |
 | --- | --- |
 | Dependency injection framework | Two modules and one database. A constructor and one factory are cheaper than Hilt. |
-| Navigation library | Sprint 2 decides this once there are screens to navigate between. |
+| Navigation library | Four tabs and one modal form do not need a back stack. The tab is `rememberSaveable` state, which already survives rotation and process death. |
 | Repository interfaces with fake implementations | There is one implementation. An interface with one implementor is a comment with ceremony. |
 | A `:feature:*` module per screen | Four screens. Module boundaries would cost more than they clarify. |
 
