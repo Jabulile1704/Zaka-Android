@@ -57,7 +57,7 @@ Android one.
 
 ## 3. Implementation
 
-**Sprint 1 complete; three sprints to go.**
+**Sprints 1 and 2 complete; two to go.**
 
 | Issue | State |
 | --- | --- |
@@ -66,6 +66,11 @@ Android one.
 | [#3](../../issues/3) Continuous integration | Done |
 | [#11](../../issues/11) Material 3 Expressive theme | Done |
 | [#15](../../issues/15) SDLC, DevOps and architecture documentation | Done |
+| [#4](../../issues/4) Room database for expenses and cards | Done |
+| [#5](../../issues/5) Expenses list grouped by day | Done |
+| [#6](../../issues/6) Add and edit an expense | Done |
+| [#7](../../issues/7) Monthly insights with a category breakdown | Done |
+| [#14](../../issues/14) Accessibility from the start | Done |
 
 The port went test-first: the Swift test suite was translated before the code
 it tests, so the Kotlin had a specification to satisfy rather than a reference
@@ -140,7 +145,7 @@ gh issue view 2 --repo Jabulile1704/Zaka-Android
 | --- | --- |
 | Requirements | Strong — inherited from a working app, then cut into sprints |
 | Design | Technical written up front; Android screen design still to do |
-| Implementation | Sprint 1 of 4 complete |
-| Testing | Pure logic well covered; nothing else covered at all |
+| Implementation | Sprints 1 and 2 of 4 complete |
+| Testing | Logic, store, state holders and screen semantics covered; appearance not |
 | Deployment | Not started |
 | Maintenance | Nothing to maintain yet |
