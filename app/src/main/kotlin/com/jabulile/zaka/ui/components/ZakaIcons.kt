@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material.icons.filled.Payments
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.material.icons.filled.Receipt
 import androidx.compose.material.icons.filled.ShoppingBag
@@ -45,6 +46,7 @@ object ZakaIcons {
 
     val Delete: ImageVector = Icons.Filled.Delete
     val Export: ImageVector = Icons.Filled.FileDownload
+    val Scan: ImageVector = Icons.Filled.PhotoCamera
     val Close: ImageVector = Icons.Filled.Close
     val Save: ImageVector = Icons.Filled.Check
     val Previous: ImageVector = Icons.Filled.ChevronLeft

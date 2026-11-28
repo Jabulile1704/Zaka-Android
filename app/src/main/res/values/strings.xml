@@ -55,4 +55,11 @@
     <string name="export_expenses">Export everything as CSV</string>
     <string name="export_cards">Export cards as CSV</string>
     <string name="export_chooser">Share your Zaka export</string>
+
+    <string name="card_scan">Scan the barcode</string>
+    <string name="scan_hint">Hold the card\'s barcode in the frame.</string>
+    <string name="scan_type_instead">Type it instead</string>
+    <string name="scan_try_again">Ask again</string>
+    <string name="scan_no_camera">This device has no camera. Type the number in instead — everything else works the same.</string>
+    <string name="scan_no_permission">Zaka needs the camera to read a barcode. It is only used while this screen is open, and nothing is saved but the number.</string>
 </resources>

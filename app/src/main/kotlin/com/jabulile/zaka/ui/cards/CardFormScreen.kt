@@ -15,7 +15,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -38,6 +40,7 @@ import com.jabulile.zaka.core.BarcodeSymbology
 import com.jabulile.zaka.core.CardTint
 import com.jabulile.zaka.core.CodeGenerator
 import com.jabulile.zaka.ui.components.CodeImage
+import com.jabulile.zaka.ui.components.ZakaIcons
 import com.jabulile.zaka.ui.theme.hexColor
 
 /**
@@ -58,6 +61,7 @@ fun CardFormScreen(
     onDelete: () -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
+    onScan: (() -> Unit)? = null,
 ) {
     val nameFocus = remember { FocusRequester() }
     LaunchedEffect(state.loaded) {
@@ -104,6 +108,18 @@ fun CardFormScreen(
                 )
             },
         )
+
+        if (onScan != null) {
+            OutlinedButton(onClick = onScan, modifier = Modifier.fillMaxWidth()) {
+                Icon(
+                    imageVector = ZakaIcons.Scan,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                )
+                Spacer(modifier = Modifier.size(8.dp))
+                Text(stringResource(R.string.card_scan))
+            }
+        }
 
         Text(
             text = stringResource(R.string.card_type),

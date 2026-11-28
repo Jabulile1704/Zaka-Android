@@ -45,6 +45,7 @@ import com.jabulile.zaka.ui.form.ExpenseFormViewModel
 import com.jabulile.zaka.ui.cards.CardCodeScreen
 import com.jabulile.zaka.ui.cards.CardFormScreen
 import com.jabulile.zaka.ui.cards.CardFormViewModel
+import com.jabulile.zaka.ui.cards.CardScannerScreen
 import com.jabulile.zaka.ui.cards.CardsScreen
 import com.jabulile.zaka.ui.cards.CardsViewModel
 import com.jabulile.zaka.ui.insights.InsightsScreen
@@ -254,6 +255,7 @@ private fun EditCard(
         factory = CardFormViewModel.factory(cards, cardId),
     )
     val state by form.state.collectAsStateWithLifecycle()
+    var scanning by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(state.finished) {
         if (state.finished) {
@@ -261,7 +263,21 @@ private fun EditCard(
             onClose()
         }
     }
-    BackHandler(onBack = onClose)
+    BackHandler { if (scanning) scanning = false else onClose() }
+
+    if (scanning) {
+        Scaffold(modifier = modifier.fillMaxSize()) { insets ->
+            CardScannerScreen(
+                onScanned = {
+                    form.scanned(it)
+                    scanning = false
+                },
+                onCancel = { scanning = false },
+                modifier = Modifier.padding(insets),
+            )
+        }
+        return
+    }
 
     Scaffold(modifier = modifier.fillMaxSize()) { insets ->
         CardFormScreen(
@@ -274,6 +290,7 @@ private fun EditCard(
             onDelete = form::delete,
             onCancel = onClose,
             modifier = Modifier.padding(insets),
+            onScan = { scanning = true },
         )
     }
 }

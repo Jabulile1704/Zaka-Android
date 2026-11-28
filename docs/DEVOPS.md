@@ -11,9 +11,10 @@ to `main`, every pull request, and on demand.
 
 | Job | Does | Fails when |
 | --- | --- | --- |
-| **Logic tests** | `./gradlew :core:test` — 68 tests | Amount parsing, EAN-13, grouping, month windows or the breakdown breaks |
+| **Logic tests** | `./gradlew :core:test` — 77 tests | Amount parsing, EAN-13, grouping, month windows or the breakdown breaks |
 | **Android lint** | `./gradlew :app:lintDebug` | Lint reports an error-severity problem |
-| **App build and unit tests** | `assembleDebug`, `testDebugUnitTest` — 58 tests — then `assembleRelease` | The app stops compiling, the store or its mapping breaks, or R8 chokes on the release variant |
+| **Instrumented tests** | `connectedDebugAndroidTest` on an API 34 emulator — 2 tests | The app does not start, or Room cannot open its file on a real runtime |
+| **App build and unit tests** | `assembleDebug`, `testDebugUnitTest` — 60 tests — then `assembleRelease` | The app stops compiling, the store or its mapping breaks, or R8 chokes on the release variant |
 
 Both run on `ubuntu-latest` and sign nothing, so no keystore and no
 credentials live in the repository.
@@ -37,10 +38,14 @@ its accessibility checks are written for `ImageView` and `onTouchEvent`, and
 have almost nothing to say about Compose. The semantics tests in the unit
 suite are what actually hold accessibility in place.
 
-**Not yet in CI:** instrumented tests on an emulator. That job waits for the
-thing which genuinely needs a device, the camera scanner
-([#9](../../issues/9)); Compose UI tests run under Robolectric in the unit
-suite instead.
+Instrumented tests now run on an emulator in their own job, which the camera
+work was always the trigger for. The suite is deliberately thin — the app
+starts, and Room opens its file on a real runtime — because that is the half
+the unit suites cannot reach. Compose UI tests stay under Robolectric in the
+unit suite, where they cost seconds rather than minutes.
+
+**Still needs a physical device:** the camera scanner itself. An emulator's
+camera cannot be shown a loyalty card.
 
 ## Toolchain
 

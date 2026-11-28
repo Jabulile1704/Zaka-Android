@@ -579,3 +579,64 @@ drifts from the original until one day it is testing something else.
 message. Checking afterwards would mean the failure arrives having already
 produced a bundle, an APK and a mapping file, all carrying the wrong number,
 with the tempting option of just publishing them anyway.
+
+### The scanner decodes with ZXing, which the app already had
+
+[#9](../../issues/9)
+
+ML Kit is the usual answer and would have been a second barcode library, a
+Google model to ship, and for the bundled variant several megabytes — in an
+app whose whole claim is that it talks to nothing and carries nothing it does
+not need. ZXing is already here encoding the codes this app draws, and it
+decodes the same formats.
+
+### The decoding lives in `:core` and is tested by reading back what it drew
+
+`BarcodeReader.read` takes a plane of luminance bytes, a width, a height and
+a row stride. No Android, no camera, no lifecycle — so the whole decoding path
+is tested by encoding a code, drawing it into a byte array the way a camera
+would hand it over, and reading it straight back. Nine tests, no device.
+
+A camera frame's Y plane *is* a plane of luminance bytes, so nothing is
+converted or copied into a bitmap on the way in.
+
+Two things those tests pin that would otherwise only show up in someone's
+hand:
+
+**Row stride.** Cameras pad each row out to an alignment boundary, so the
+buffer is wider than the image. Feeding the padding in as image data turns a
+perfectly good barcode into noise.
+
+**Orientation.** A camera's rows run along the sensor's long axis, so a card
+held horizontally in front of a portrait phone arrives sideways, and ZXing
+cannot rotate this kind of source itself. `readAnyOrientation` tries the frame,
+then a quarter turn. The test asserts both halves: that the plain read
+genuinely fails on a sideways frame, and that the rotating one recovers it.
+Without this the scanner simply never reads anything, which is the most common
+way a barcode scanner is broken.
+
+### A scanned format counts as chosen
+
+A reader saying "that was an EAN-13" is better evidence than guessing from the
+digits, so a successful scan fixes the type as though the user had picked it.
+A scan of something Zaka does not store — an EAN-8, a UPC-A — still fills in
+the number and leaves the type to the usual detection.
+
+### The camera is asked for at the scanner, and never required
+
+The permission is requested when the scanner opens, not at launch, and
+`uses-feature` is `required="false"` so a device without a camera can still
+install. Every card can be typed in. Refusing the permission, or having no
+camera at all, says so and offers the keyboard rather than showing a dead
+viewfinder.
+
+### Instrumented tests exist, and are deliberately thin
+
+Two: the app starts and stays started, and the application's repositories open
+the database for real. The unit suites already cover what the app computes;
+what they cannot tell you is whether the thing starts — whether the manifest is
+right, the application class is found, Room opens its file and a frame draws.
+That is what breaks on a device and passes in CI.
+
+They run on an emulator in their own job, which is what the camera work was
+always the trigger for.

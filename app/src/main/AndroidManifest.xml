@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--
+      Asked for only when the scanner is opened, and never required: typing a
+      card number works perfectly well, so a device without a camera should
+      still be able to install this.
+    -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="false" />
+
     <application
         android:name=".ZakaApplication"
         android:allowBackup="true"
