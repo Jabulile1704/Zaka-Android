@@ -553,3 +553,29 @@ how the layout was described in the sketch and not how it first came out.
 
 Found by running the app. No test would have caught it: the arithmetic the
 chart draws was already correct.
+
+### An absent signing key makes an unsigned build, not a failed one
+
+[#13](../../issues/13)
+
+`signingConfigs` is only created when a keystore is actually configured, and
+the release build type takes `findByName("release")` — null when there is
+none. The build then produces `app-release-unsigned.apk`.
+
+The alternative, failing when the key is missing, would mean nobody could
+clone this repository and build the release variant, and CI could not prove
+the release path assembles until the day a secret existed. Both are worse than
+an artefact that is honestly named.
+
+### The release workflow calls CI rather than copying it
+
+`uses: ./.github/workflows/ci.yml`. A release that skips the tests is the
+moment the tests stop meaning anything, and a copied set of jobs is a set that
+drifts from the original until one day it is testing something else.
+
+### The tag is checked against the version before anything is built
+
+`v1.1.0` on a 1.0.0 app fails in the first step, with the fix in the error
+message. Checking afterwards would mean the failure arrives having already
+produced a bundle, an APK and a mapping file, all carrying the wrong number,
+with the tempting option of just publishing them anyway.

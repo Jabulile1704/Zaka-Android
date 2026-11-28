@@ -1,8 +1,27 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
 }
+
+/**
+ * Signing material, from a properties file that is never committed or from the
+ * environment, in that order. Absent both, the release build is simply
+ * unsigned — which is what lets anyone clone this and run `bundleRelease`
+ * without being handed a key.
+ */
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("keystore.properties")
+    if (file.exists()) load(FileInputStream(file))
+}
+
+fun signingValue(key: String, environment: String): String? =
+    keystoreProperties.getProperty(key) ?: System.getenv(environment)
+
+val keystorePath = signingValue("storeFile", "ZAKA_KEYSTORE")
 
 android {
     namespace = "com.jabulile.zaka"
@@ -21,11 +40,25 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (keystorePath != null) {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = signingValue("storePassword", "ZAKA_KEYSTORE_PASSWORD")
+                keyAlias = signingValue("keyAlias", "ZAKA_KEY_ALIAS")
+                keyPassword = signingValue("keyPassword", "ZAKA_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
         }
         release {
+            // Null when no key is configured, which leaves the bundle unsigned
+            // rather than failing the build.
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -50,6 +83,15 @@ android {
         // without an emulator.
         unitTests.isIncludeAndroidResources = true
     }
+}
+
+/**
+ * The version the release workflow checks a tag against. A task rather than a
+ * grep, so the single source of truth stays `versionName` above.
+ */
+tasks.register("printVersionName") {
+    val version = android.defaultConfig.versionName
+    doLast { println(version) }
 }
 
 dependencies {

@@ -88,21 +88,81 @@ more than a seeded month of data.
 
 ## Releases
 
-Nothing automated yet. [#13](../../issues/13) is the Google Play work and
-sits in sprint 4; until then the only artefact is the unsigned debug APK that
-CI builds and discards.
+[`.github/workflows/release.yml`](../.github/workflows/release.yml) runs when
+a tag like `v1.0.0` is pushed.
 
-When it arrives it needs, in this order:
+1. **Runs the whole of CI by calling it**, not by copying the jobs. A release
+   that skipped the tests would be the moment the tests stopped meaning
+   anything, and a copied job is one that drifts.
+2. **Checks the tag against `versionName`** before building. `v1.1.0` on a
+   1.0.0 app fails here, with the fix in the error message, rather than
+   producing artefacts that carry the wrong number.
+3. Builds an **App Bundle and an APK**, through R8.
+4. Keeps the bundle, the APK and `mapping.txt` as artefacts for 30 days.
+   The mapping file is what turns a future crash report back into line
+   numbers; without it a stack trace from a release build is noise.
+5. Publishes a **GitHub Release** with notes generated from the pull requests
+   merged since the last tag — which is the other reason every change goes
+   through one.
 
-1. An upload keystore, kept out of the repository and injected as a secret.
-2. A `release` signing config reading that secret.
-3. A tag-triggered workflow that runs CI, checks the tag against
-   `versionName`, and builds an App Bundle.
-4. A Play Console listing, which needs the Play developer registration.
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
 
-Unlike iOS, none of this is blocked by the account tier: Play registration is
-a one-off fee and there is no seven-day provisioning expiry, no TestFlight
-equivalent needed for a single user. Internal testing tracks do the job.
+### Signing
+
+The release build looks for an upload key in two places, in order: a
+`keystore.properties` at the repository root, or the environment. Finding
+neither, **it builds unsigned rather than failing** — so anyone can clone this
+and run `bundleRelease` without being handed a key, and CI can prove the
+release variant assembles before any secret exists.
+
+To sign locally, create the key once and tell Gradle where it is. Neither file
+is committed; both are in `.gitignore`.
+
+```bash
+keytool -genkeypair -v -keystore upload.jks -alias zaka \
+  -keyalg RSA -keysize 2048 -validity 10000
+```
+
+```properties
+# keystore.properties — never commit this
+storeFile=/absolute/path/to/upload.jks
+storePassword=…
+keyAlias=zaka
+keyPassword=…
+```
+
+For CI, the same four values are repository secrets, with the keystore itself
+base64-encoded:
+
+| Secret | What it is |
+| --- | --- |
+| `ZAKA_KEYSTORE_BASE64` | `base64 -i upload.jks` |
+| `ZAKA_KEYSTORE_PASSWORD` | The store password |
+| `ZAKA_KEY_ALIAS` | `zaka` |
+| `ZAKA_KEY_PASSWORD` | The key password |
+
+> **Keep the keystore and back it up somewhere that is not this machine.**
+> Google Play ties an app to its upload key. Lose it and the recovery is a
+> support request, not a command.
+
+### Release size
+
+R8 earns its place: the debug APK is about 21 MB and the release APK is
+**1.7 MB**. Most of that difference is `material-icons-extended`, which ships
+roughly two thousand icons and of which this app references about two dozen.
+That is the measurement behind the decision to use the frozen icon artifact at
+all — see [DECISIONS.md](DECISIONS.md).
+
+### Versioning
+
+`versionName` and `versionCode` are both edited by hand in
+`app/build.gradle.kts`. Play rejects an upload whose `versionCode` is not
+higher than the last one, so it goes up on every release, including a release
+that only fixes something. The tag check only guards `versionName`; nothing
+yet guards the code, which is a gap worth closing the first time an upload is
+rejected.
 
 ## Project board
 
