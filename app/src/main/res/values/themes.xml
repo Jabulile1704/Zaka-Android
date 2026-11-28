@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Only the window the activity opens into. Everything the user sees is
+      drawn by Compose, so this holds nothing but a background colour that
+      matches the light theme's surface and keeps the launch from flashing
+      white or black.
+    -->
+    <style name="Theme.Zaka" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>

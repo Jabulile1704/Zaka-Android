@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Zaka</string>
+    <string name="scaffold_title">Zaka</string>
+    <string name="scaffold_body">The Gradle project builds, the ported logic is under test, and the theme is in place. Screens arrive in sprint 2.</string>
+</resources>
