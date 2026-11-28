@@ -1,0 +1,90 @@
+package com.jabulile.zaka.ui.expenses
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.jabulile.zaka.core.DayGroup
+import com.jabulile.zaka.data.ExpenseRepository
+import java.time.Clock
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.ZoneId
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+
+/**
+ * One immutable state for the whole screen.
+ *
+ * [days] arrives already bucketed and already totalled, and [today] comes with
+ * it so a day heading never has to ask the clock during composition.
+ */
+data class ExpensesUiState(
+    val days: List<DayGroup> = emptyList(),
+    val monthTotal: Double = 0.0,
+    /**
+     * Required rather than defaulted to `LocalDate.now()`: a default would
+     * read the system zone while everything else here reads the injected
+     * clock, which is the sort of disagreement that only shows up abroad.
+     */
+    val today: LocalDate,
+    val loaded: Boolean = false,
+)
+
+class ExpensesViewModel(
+    private val expenses: ExpenseRepository,
+    private val zone: ZoneId = ZoneId.systemDefault(),
+    private val clock: Clock = Clock.system(zone),
+) : ViewModel() {
+    /**
+     * The date is read inside the flow, not when this view model is built.
+     *
+     * Reading it once at construction pinned the month-to-date total to
+     * whichever month the process started in: leave the app open overnight on
+     * the first and the strip above the tabs keeps totalling last month while
+     * the list above it shows this one. Day headings went stale the same way.
+     *
+     * `WhileSubscribed` restarts this block when the screen is observed again,
+     * so returning to the app after midnight re-reads both.
+     */
+    val state: StateFlow<ExpensesUiState> =
+        flow {
+            val today = LocalDate.now(clock)
+            emitAll(
+                combine(
+                    expenses.observeDays(),
+                    expenses.observeMonthTotal(YearMonth.from(today)),
+                ) { days, monthTotal ->
+                    ExpensesUiState(
+                        days = days,
+                        monthTotal = monthTotal,
+                        today = today,
+                        loaded = true,
+                    )
+                },
+            )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
+            initialValue = ExpensesUiState(today = LocalDate.now(clock)),
+        )
+
+    fun delete(id: Long) {
+        viewModelScope.launch { expenses.delete(id) }
+    }
+
+    companion object {
+        /** Long enough to survive a rotation without re-querying. */
+        private const val STOP_TIMEOUT_MILLIS = 5_000L
+
+        fun factory(expenses: ExpenseRepository): ViewModelProvider.Factory = viewModelFactory {
+            initializer { ExpensesViewModel(expenses) }
+        }
+    }
+}

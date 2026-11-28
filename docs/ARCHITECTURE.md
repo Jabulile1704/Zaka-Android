@@ -106,7 +106,7 @@ work, so there is no scheduler, no WorkManager and nothing to retry.
 | Not here | Why |
 | --- | --- |
 | Dependency injection framework | Two modules and one database. A constructor and one factory are cheaper than Hilt. |
-| Navigation library | Sprint 2 decides this once there are screens to navigate between. |
+| Navigation library | Four tabs and one modal form do not need a back stack. The tab is `rememberSaveable` state, which already survives rotation and process death. |
 | Repository interfaces with fake implementations | There is one implementation. An interface with one implementor is a comment with ceremony. |
 | A `:feature:*` module per screen | Four screens. Module boundaries would cost more than they clarify. |
 

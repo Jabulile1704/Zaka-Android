@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Zaka</string>
-    <string name="scaffold_title">Zaka</string>
-    <string name="scaffold_body">The Gradle project builds, the ported logic is under test, and the theme is in place. Screens arrive in sprint 2.</string>
+
+    <string name="tab_expenses">Expenses</string>
+    <string name="tab_add">Add</string>
+    <string name="tab_insights">Insights</string>
+    <string name="tab_cards">Cards</string>
+
+    <string name="month_to_date">This month</string>
+    <string name="coming_this_sprint">Not built yet.</string>
+
+    <string name="expense_edit_action">Edit this expense</string>
+    <string name="expenses_empty_title">Nothing logged yet</string>
+    <string name="expenses_empty_body">Add an expense and it will show up here, grouped by the day you spent it.</string>
 </resources>
