@@ -265,3 +265,54 @@ rather than as a label and a number a screen reader has to join up.
 pushed is too easy to lose an expense to, and there is no undo yet. Swiping
 the other way does nothing, which is a cheap way of making the gesture
 deliberate.
+
+### Add and edit are one form in two modes **(ported)**
+
+[#6](../../issues/6)
+
+`ExpenseFormViewModel` takes a nullable id: null adds, an id edits. One screen,
+one set of validation rules, one place to change when a field is added.
+
+### Editing keeps the expense's time of day
+
+The form shows a date, never a time, but the record stores an instant. If an
+edit rewrote the instant to "now", changing an amount would move the row to the
+top of its day — the list is ordered `date DESC`, and the time is what orders
+expenses *within* a day.
+
+So the view model remembers the time of day it loaded and writes it back. A new
+expense gets the clock instead, which is what makes "newest first" mean
+anything inside today.
+
+### The amount goes back into the field as plain digits
+
+`String.format(Locale.US, "%.2f", amount)` — `249.90`, not `R249.90`. The field
+is a text input that `Money.parse` has to read again on every keystroke, and
+feeding it the display format would mean parsing a currency symbol and a
+thousands separator back out.
+
+### The date picker is driven in UTC
+
+`DatePickerState` works in milliseconds that it interprets as UTC, so a
+`LocalDate` is carried in at UTC midnight and read back the same way. Using the
+device zone for that conversion shifts the selection by a day either side of
+midnight — the picker would open on the wrong date for anyone east of
+Greenwich, which includes everyone using this app.
+
+### The Add tab resets its form instead of getting a new one
+
+After a save the Add tab calls `reset()` on the same view model. The obvious
+alternative — a new `viewModel(key = "add-$n")` per save — leaves every
+previous form in the activity's `ViewModelStore` until the process dies.
+
+Resetting also fixes the thing that would be worse than a leak: coming back to
+the Add tab and finding the expense you just saved sitting there, ready to be
+saved again.
+
+### Sixteen chips, two to a row, not a lazy grid
+
+`LazyVerticalGrid` inside a vertically scrolling column is a nested-scroll
+fight, and sixteen chips are not worth laziness. `chunked(2)` with
+`Modifier.weight(1f)` gives two equal chips per row and leaves room for the
+label next to the icon, which is what makes the grid readable without relying
+on the glyphs alone.

@@ -12,7 +12,7 @@ to `main`, every pull request, and on demand.
 | Job | Does | Fails when |
 | --- | --- | --- |
 | **Logic tests** | `./gradlew :core:test` — 49 tests | Amount parsing, EAN-13, grouping, month windows or the breakdown breaks |
-| **App build and unit tests** | `assembleDebug`, `testDebugUnitTest` — 23 tests — then `assembleRelease` | The app stops compiling, the store or its mapping breaks, or R8 chokes on the release variant |
+| **App build and unit tests** | `assembleDebug`, `testDebugUnitTest` — 33 tests — then `assembleRelease` | The app stops compiling, the store or its mapping breaks, or R8 chokes on the release variant |
 
 Both run on `ubuntu-latest` and sign nothing, so no keystore and no
 credentials live in the repository.

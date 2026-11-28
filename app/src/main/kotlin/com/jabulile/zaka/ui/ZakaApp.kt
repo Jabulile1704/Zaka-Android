@@ -1,5 +1,6 @@
 package com.jabulile.zaka.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -36,15 +38,18 @@ import com.jabulile.zaka.ui.components.MoneyText
 import com.jabulile.zaka.ui.components.ZakaIcons
 import com.jabulile.zaka.ui.expenses.ExpensesScreen
 import com.jabulile.zaka.ui.expenses.ExpensesViewModel
+import com.jabulile.zaka.ui.form.ExpenseFormScreen
+import com.jabulile.zaka.ui.form.ExpenseFormViewModel
 
 /**
  * The four tabs, and the month-to-date total that sits above them wherever you
  * are.
  *
  * No navigation library. Four destinations and one modal form do not need a
- * back stack: the tab is `rememberSaveable` state, which survives rotation and
- * process death, and that is the whole requirement. Revisit this the moment
- * there are deep links or a third level of screen.
+ * back stack: the tab and the expense being edited are `rememberSaveable`
+ * state, which survives rotation and process death, and that is the whole
+ * requirement. Revisit this the moment there are deep links or a third level
+ * of screen.
  */
 enum class ZakaTab(val labelRes: Int, val icon: ImageVector) {
     EXPENSES(R.string.tab_expenses, ZakaIcons.Expenses),
@@ -60,6 +65,18 @@ fun ZakaApp(
     modifier: Modifier = Modifier,
 ) {
     var tab by rememberSaveable { mutableStateOf(ZakaTab.EXPENSES) }
+    var editing by rememberSaveable { mutableStateOf<Long?>(null) }
+
+    val editingId = editing
+    if (editingId != null) {
+        EditExpense(
+            expenses = expenses,
+            expenseId = editingId,
+            onClose = { editing = null },
+            modifier = modifier,
+        )
+        return
+    }
 
     val expensesViewModel: ExpensesViewModel =
         viewModel(factory = ExpensesViewModel.factory(expenses))
@@ -72,32 +89,101 @@ fun ZakaApp(
                 MonthToDate(total = expensesState.monthTotal)
                 NavigationBar {
                     ZakaTab.entries.forEach { candidate ->
-                        val label = stringResource(candidate.labelRes)
                         NavigationBarItem(
                             selected = tab == candidate,
                             onClick = { tab = candidate },
                             icon = {
                                 Icon(imageVector = candidate.icon, contentDescription = null)
                             },
-                            label = { Text(label) },
+                            label = { Text(stringResource(candidate.labelRes)) },
                         )
                     }
                 }
             }
         },
     ) { insets ->
+        val content = Modifier.padding(insets)
         when (tab) {
             ZakaTab.EXPENSES -> ExpensesScreen(
                 state = expensesState,
-                onEdit = { /* #6 */ },
+                onEdit = { editing = it },
                 onDelete = expensesViewModel::delete,
-                modifier = Modifier.padding(insets),
+                modifier = content,
             )
 
-            ZakaTab.ADD -> ComingSoon(R.string.tab_add, Modifier.padding(insets))
-            ZakaTab.INSIGHTS -> ComingSoon(R.string.tab_insights, Modifier.padding(insets))
-            ZakaTab.CARDS -> ComingSoon(R.string.tab_cards, Modifier.padding(insets))
+            ZakaTab.ADD -> AddExpense(
+                expenses = expenses,
+                onSaved = { tab = ZakaTab.EXPENSES },
+                modifier = content,
+            )
+
+            ZakaTab.INSIGHTS -> ComingSoon(R.string.tab_insights, content)
+            ZakaTab.CARDS -> ComingSoon(R.string.tab_cards, content)
         }
+    }
+}
+
+@Composable
+private fun AddExpense(
+    expenses: ExpenseRepository,
+    onSaved: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val form: ExpenseFormViewModel =
+        viewModel(key = "add", factory = ExpenseFormViewModel.factory(expenses, null))
+    val state by form.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.finished) {
+        if (state.finished) {
+            // Blank the form before leaving, so coming back to the tab is not
+            // the last expense waiting to be saved again.
+            form.reset()
+            onSaved()
+        }
+    }
+
+    ExpenseFormScreen(
+        state = state,
+        onAmountChange = form::amountChanged,
+        onCategoryChange = form::categoryChosen,
+        onDateChange = form::dateChosen,
+        onNoteChange = form::noteChanged,
+        onSave = form::save,
+        onDelete = form::delete,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun EditExpense(
+    expenses: ExpenseRepository,
+    expenseId: Long,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val form: ExpenseFormViewModel = viewModel(
+        key = "edit-$expenseId",
+        factory = ExpenseFormViewModel.factory(expenses, expenseId),
+    )
+    val state by form.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.finished) {
+        if (state.finished) onClose()
+    }
+    BackHandler(onBack = onClose)
+
+    Scaffold(modifier = modifier.fillMaxSize()) { insets ->
+        ExpenseFormScreen(
+            state = state,
+            onAmountChange = form::amountChanged,
+            onCategoryChange = form::categoryChosen,
+            onDateChange = form::dateChosen,
+            onNoteChange = form::noteChanged,
+            onSave = form::save,
+            onDelete = form::delete,
+            onCancel = onClose,
+            modifier = Modifier.padding(insets),
+        )
     }
 }
 
@@ -142,7 +228,9 @@ private fun MonthToDate(total: Double, modifier: Modifier = Modifier) {
 @Composable
 private fun ComingSoon(labelRes: Int, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.fillMaxSize().padding(32.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

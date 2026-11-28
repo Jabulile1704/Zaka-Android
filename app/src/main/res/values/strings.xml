@@ -13,4 +13,15 @@
     <string name="expense_edit_action">Edit this expense</string>
     <string name="expenses_empty_title">Nothing logged yet</string>
     <string name="expenses_empty_body">Add an expense and it will show up here, grouped by the day you spent it.</string>
+
+    <string name="form_amount">Amount</string>
+    <string name="form_amount_hint">Both a comma and a dot mean the decimal point.</string>
+    <string name="form_date">Date</string>
+    <string name="form_date_confirm">Use this date</string>
+    <string name="form_note">Note</string>
+    <string name="form_category">Category</string>
+    <string name="form_save">Save</string>
+    <string name="form_update">Update</string>
+    <string name="form_cancel">Cancel</string>
+    <string name="form_delete">Delete this expense</string>
 </resources>
