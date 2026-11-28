@@ -94,7 +94,7 @@ class CardFormViewModelTest {
         form.nameChanged("  Dis-Chem  ")
         form.numberChanged(ean)
         form.tintChosen("B3246B")
-        form.save()
+        form.saveAndSettle()
 
         val saved = cards.observeAll().first().single()
         assertEquals("Dis-Chem", saved.name)
@@ -117,6 +117,7 @@ class CardFormViewModelTest {
         assertFalse(form.state.value.canSave)
 
         advanceUntilIdle()
+        form.state.filter { it.finished }.first()
         assertEquals(1, cards.observeAll().first().size)
     }
 
@@ -135,7 +136,7 @@ class CardFormViewModelTest {
         val form = editing(id)
         form.state.filter { it.loaded }.first()
         form.nameChanged("Pick n Pay Smart Shopper")
-        form.save()
+        form.saveAndSettle()
 
         val saved = cards.find(id)!!
         assertEquals("Pick n Pay Smart Shopper", saved.name)
@@ -188,6 +189,12 @@ class CardFormViewModelTest {
     @Test
     fun `editing a card that has gone closes the form`() = runTest {
         assertTrue(editing(404).state.filter { it.loaded }.first().finished)
+    }
+
+    /** Same reason as the expense form: the write outlives the call. */
+    private suspend fun CardFormViewModel.saveAndSettle() {
+        save()
+        state.filter { it.finished }.first()
     }
 
     private fun adding() = CardFormViewModel(cards, cardId = null)
