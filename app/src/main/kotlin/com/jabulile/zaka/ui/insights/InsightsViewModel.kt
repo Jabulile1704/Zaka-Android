@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 data class InsightsUiState(
@@ -48,23 +49,32 @@ class InsightsViewModel(
     private val month = MutableStateFlow(YearMonth.now(clock))
     private val style = MutableStateFlow(preferences.breakdownStyle)
 
+    /**
+     * The month and its totals travel together.
+     *
+     * Combining the month with a separate flow of totals let the two
+     * disagree: changing month emitted the new month's name immediately,
+     * while the query behind the totals was still running, so for a frame the
+     * screen showed one month's heading above another month's figures.
+     * Pairing first and querying inside makes that state unrepresentable.
+     */
     val state: StateFlow<InsightsUiState> =
-        combine(
-            month.flatMapLatest { expenses.observeMonthBreakdown(it) },
-            month,
-            style,
-        ) { totals, month, style ->
-            val total = totals.values.sum()
-            InsightsUiState(
-                month = month,
-                total = total,
-                perDay = total / daysCounted(month),
-                slices = SpendBreakdown.slices(totals),
-                style = style,
-                canGoForward = month < YearMonth.now(clock),
-                loaded = true,
-            )
-        }.stateIn(
+        combine(month, style) { month, style -> month to style }
+            .flatMapLatest { (month, style) ->
+                expenses.observeMonthBreakdown(month).map { totals ->
+                    val total = totals.values.sum()
+                    InsightsUiState(
+                        month = month,
+                        total = total,
+                        perDay = total / daysCounted(month),
+                        slices = SpendBreakdown.slices(totals),
+                        style = style,
+                        canGoForward = month < YearMonth.now(clock),
+                        loaded = true,
+                    )
+                }
+            }
+            .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS),
             initialValue = InsightsUiState(month = YearMonth.now(clock), style = style.value),

@@ -103,12 +103,16 @@ class InsightsViewModelTest {
         assertFalse("already at this month", model.state.filter { it.loaded }.first().canGoForward)
 
         model.previousMonth()
-        val previous = model.state.filter { it.month == YearMonth.from(lastMonth) }.first()
+        val previous = model.state
+            .filter { it.loaded && it.month == YearMonth.from(lastMonth) }
+            .first()
         assertEquals(40.0, previous.total, 1e-9)
         assertTrue("October can step forward to November", previous.canGoForward)
 
         model.nextMonth()
-        val back = model.state.filter { it.month == YearMonth.from(today) }.first()
+        val back = model.state
+            .filter { it.loaded && it.month == YearMonth.from(today) }
+            .first()
         assertEquals(100.0, back.total, 1e-9)
 
         model.nextMonth()
@@ -138,6 +142,28 @@ class InsightsViewModelTest {
             BreakdownStyle.BARS,
             viewModel().state.filter { it.loaded }.first().style,
         )
+    }
+
+    @Test
+    fun `a month's figures always belong to the month being shown`() = runTest {
+        val lastMonth = today.minusMonths(1).withDayOfMonth(1)
+        expenses.save(expense(100.0, ExpenseCategory.RENT, today))
+        expenses.save(expense(40.0, ExpenseCategory.WIFI, lastMonth))
+
+        val model = viewModel()
+        val seen = mutableListOf<Pair<java.time.YearMonth, Double>>()
+
+        model.state.filter { it.loaded }.first().let { seen += it.month to it.total }
+        model.previousMonth()
+        seen += model.state.filter { it.month == YearMonth.from(lastMonth) }.first()
+            .let { it.month to it.total }
+
+        // Every state the screen could have rendered pairs a month with its
+        // own total, never one month's heading over another month's figures.
+        for ((month, total) in seen) {
+            val expected = if (month == YearMonth.from(today)) 100.0 else 40.0
+            assertEquals("$month showed the wrong total", expected, total, 1e-9)
+        }
     }
 
     private fun viewModel() = InsightsViewModel(expenses, preferences, zone, clock)
