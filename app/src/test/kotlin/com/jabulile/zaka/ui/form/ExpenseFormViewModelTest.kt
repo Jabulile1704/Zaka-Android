@@ -61,7 +61,7 @@ class ExpenseFormViewModelTest {
         form.categoryChosen(ExpenseCategory.TRANSPORT)
         form.noteChanged("  Uber home  ")
         form.dateChosen(LocalDate.of(2026, 11, 20))
-        form.save()
+        form.saveAndSettle()
 
         val saved = expenses.observeDays().first().single().expenses.single()
         assertEquals(249.90, saved.amount, 1e-9)
@@ -74,7 +74,7 @@ class ExpenseFormViewModelTest {
     fun `a comma is the decimal point here too`() = runTest {
         val form = adding()
         form.amountChanged("45,50")
-        form.save()
+        form.saveAndSettle()
 
         assertEquals(
             45.50,
@@ -137,7 +137,7 @@ class ExpenseFormViewModelTest {
         val form = editing(id)
         form.state.filter { it.loaded }.first()
         form.amountChanged("120")
-        form.save()
+        form.saveAndSettle()
 
         assertEquals(original, expenses.find(id)!!.date)
     }
@@ -151,7 +151,7 @@ class ExpenseFormViewModelTest {
         val form = editing(id)
         form.state.filter { it.loaded }.first()
         form.amountChanged("120")
-        form.save()
+        form.saveAndSettle()
 
         val all = expenses.observeDays().first().flatMap { it.expenses }
         assertEquals(1, all.size)
@@ -187,7 +187,7 @@ class ExpenseFormViewModelTest {
         val form = adding()
         form.amountChanged("45,50")
         form.noteChanged("lunch")
-        form.save()
+        form.saveAndSettle()
         form.reset()
 
         assertEquals("", form.state.value.amountText)
@@ -211,10 +211,24 @@ class ExpenseFormViewModelTest {
         assertFalse("the button is spent while saving", form.state.value.canSave)
 
         advanceUntilIdle()
+        form.state.filter { it.finished }.first()
 
         val all = expenses.observeDays().first().flatMap { it.expenses }
         assertEquals(1, all.size)
         assertEquals(45.50, all.single().amount, 1e-9)
+    }
+
+    /**
+     * Saves, and waits for the save to have happened.
+     *
+     * save() launches into the view model's scope and returns at its first
+     * suspension, so reading the database straight afterwards is a race
+     * against Room's own executor — one that a developer machine wins and a
+     * CI runner does not. The form sets finished once the write is done.
+     */
+    private suspend fun ExpenseFormViewModel.saveAndSettle() {
+        save()
+        state.filter { it.finished }.first()
     }
 
     private fun adding() = ExpenseFormViewModel(expenses, expenseId = null, zone = zone)
