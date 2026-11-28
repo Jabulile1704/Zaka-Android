@@ -168,8 +168,12 @@ class ExpenseFormViewModelTest {
         form.state.filter { it.loaded }.first()
         form.delete()
 
+        // delete() launches and returns; the row is gone once the form says
+        // it has finished. Asserting straight away raced the database and
+        // passed only on a machine quick enough to hide it.
+        form.state.filter { it.finished }.first()
+
         assertNull(expenses.find(id))
-        assertTrue(form.state.value.finished)
     }
 
     @Test
