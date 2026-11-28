@@ -7,6 +7,19 @@ enum class BarcodeSymbology(val raw: String, val label: String, val hint: String
     QR("qr", "QR", "Square code"),
     ;
 
+    /**
+     * Light modules required on every side.
+     *
+     * Not decoration: a scanner reads the quiet zone as the start of the code
+     * and refuses one that runs to the edge of the screen. Ten for the linear
+     * symbologies, which covers EAN-13's eleven-and-seven asymmetry with one
+     * number; four is what the QR specification asks for.
+     */
+    val quietZone: Int get() = when (this) {
+        EAN13, CODE128 -> 10
+        QR -> 4
+    }
+
     /** Whether this symbology can actually draw [number]. */
     fun accepts(number: String): Boolean = when (this) {
         EAN13 -> Ean13.isValid(number)

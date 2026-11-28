@@ -6,10 +6,14 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import com.jabulile.zaka.core.BarcodeSymbology
 import com.jabulile.zaka.core.DayGroup
 import com.jabulile.zaka.core.Expense
 import com.jabulile.zaka.core.ExpenseCategory
+import com.jabulile.zaka.core.LoyaltyCard
 import com.jabulile.zaka.core.SpendBreakdown
+import com.jabulile.zaka.ui.cards.CardsScreen
+import com.jabulile.zaka.ui.cards.CardsUiState
 import com.jabulile.zaka.ui.expenses.ExpensesScreen
 import com.jabulile.zaka.ui.expenses.ExpensesUiState
 import com.jabulile.zaka.ui.insights.InsightsScreen
@@ -108,6 +112,51 @@ class AccessibilityTest {
 
         compose.onNodeWithContentDescription("Previous month").assertExists()
         compose.onNodeWithContentDescription("Next month").assertExists()
+    }
+
+    @Test
+    fun `a card can be edited and deleted without a long press`() {
+        val edited = mutableListOf<Long>()
+        val deleted = mutableListOf<Long>()
+
+        compose.setContent {
+            ZakaTheme(dynamicColor = false) {
+                CardsScreen(
+                    state = CardsUiState(
+                        cards = listOf(
+                            LoyaltyCard(
+                                id = 3,
+                                name = "Clicks",
+                                number = "6001087001618",
+                                symbology = BarcodeSymbology.EAN13,
+                                addedAt = java.time.Instant.EPOCH,
+                            ),
+                        ),
+                        loaded = true,
+                    ),
+                    onShow = {},
+                    onEdit = { edited += it },
+                    onDelete = { deleted += it },
+                    onAdd = {},
+                )
+            }
+        }
+
+        val actions = compose
+            .onNode(SemanticsMatcher.keyIsDefined(SemanticsActions.CustomActions))
+            .fetchSemanticsNode()
+            .config[SemanticsActions.CustomActions]
+
+        assertEquals(
+            listOf("Edit this card", "Delete this card"),
+            actions.map { it.label },
+        )
+
+        actions[0].action()
+        actions[1].action()
+
+        assertEquals(listOf(3L), edited)
+        assertEquals(listOf(3L), deleted)
     }
 
     private fun expensesState(): ExpensesUiState {

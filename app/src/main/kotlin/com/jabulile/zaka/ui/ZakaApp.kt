@@ -41,6 +41,11 @@ import com.jabulile.zaka.ui.expenses.ExpensesScreen
 import com.jabulile.zaka.ui.expenses.ExpensesViewModel
 import com.jabulile.zaka.ui.form.ExpenseFormScreen
 import com.jabulile.zaka.ui.form.ExpenseFormViewModel
+import com.jabulile.zaka.ui.cards.CardCodeScreen
+import com.jabulile.zaka.ui.cards.CardFormScreen
+import com.jabulile.zaka.ui.cards.CardFormViewModel
+import com.jabulile.zaka.ui.cards.CardsScreen
+import com.jabulile.zaka.ui.cards.CardsViewModel
 import com.jabulile.zaka.ui.insights.InsightsScreen
 import com.jabulile.zaka.ui.insights.InsightsViewModel
 
@@ -70,6 +75,40 @@ fun ZakaApp(
 ) {
     var tab by rememberSaveable { mutableStateOf(ZakaTab.EXPENSES) }
     var editing by rememberSaveable { mutableStateOf<Long?>(null) }
+    var cardShown by rememberSaveable { mutableStateOf<Long?>(null) }
+    var cardEdited by rememberSaveable { mutableStateOf<Long?>(null) }
+    var addingCard by rememberSaveable { mutableStateOf(false) }
+
+    val cardsViewModel: CardsViewModel = viewModel(factory = CardsViewModel.factory(cards))
+    val cardsState by cardsViewModel.state.collectAsStateWithLifecycle()
+
+    // Anything full screen wins over the tabs, in the order it was opened.
+    val editedCardId = cardEdited
+    if (addingCard || editedCardId != null) {
+        EditCard(
+            cards = cards,
+            cardId = editedCardId,
+            onClose = {
+                addingCard = false
+                cardEdited = null
+            },
+            modifier = modifier,
+        )
+        return
+    }
+
+    val shownCard = cardShown?.let { id -> cardsState.cards.firstOrNull { it.id == id } }
+    if (shownCard != null) {
+        BackHandler { cardShown = null }
+        Scaffold(modifier = modifier.fillMaxSize()) { insets ->
+            CardCodeScreen(
+                card = shownCard,
+                onClose = { cardShown = null },
+                modifier = Modifier.padding(insets),
+            )
+        }
+        return
+    }
 
     val editingId = editing
     if (editingId != null) {
@@ -126,7 +165,14 @@ fun ZakaApp(
                 preferences = preferences,
                 modifier = content,
             )
-            ZakaTab.CARDS -> ComingSoon(R.string.tab_cards, content)
+            ZakaTab.CARDS -> CardsScreen(
+                state = cardsState,
+                onShow = { cardShown = it },
+                onEdit = { cardEdited = it },
+                onDelete = cardsViewModel::delete,
+                onAdd = { addingCard = true },
+                modifier = content,
+            )
         }
     }
 }
@@ -179,6 +225,42 @@ private fun AddExpense(
         onDelete = form::delete,
         modifier = modifier,
     )
+}
+
+@Composable
+private fun EditCard(
+    cards: LoyaltyCardRepository,
+    cardId: Long?,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val form: CardFormViewModel = viewModel(
+        key = "card-${cardId ?: "new"}",
+        factory = CardFormViewModel.factory(cards, cardId),
+    )
+    val state by form.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(state.finished) {
+        if (state.finished) {
+            form.reset()
+            onClose()
+        }
+    }
+    BackHandler(onBack = onClose)
+
+    Scaffold(modifier = modifier.fillMaxSize()) { insets ->
+        CardFormScreen(
+            state = state,
+            onName = form::nameChanged,
+            onNumber = form::numberChanged,
+            onSymbology = form::symbologyChosen,
+            onTint = form::tintChosen,
+            onSave = form::save,
+            onDelete = form::delete,
+            onCancel = onClose,
+            modifier = Modifier.padding(insets),
+        )
+    }
 }
 
 @Composable
@@ -249,26 +331,5 @@ private fun MonthToDate(total: Double, modifier: Modifier = Modifier) {
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun ComingSoon(labelRes: Int, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = stringResource(labelRes),
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            text = stringResource(R.string.coming_this_sprint),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }

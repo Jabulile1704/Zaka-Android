@@ -10,4 +10,7 @@ import com.jabulile.zaka.core.ExpenseCategory
  * is the one place that turns them into a [Color].
  */
 val ExpenseCategory.color: Color
-    get() = Color(colorHex.toLong(radix = 16) or 0xFF000000L)
+    get() = colorHex.hexColor()
+
+/** Six hexadecimal digits, as Compose sees them. Opaque by definition. */
+fun String.hexColor(): Color = Color(toLong(radix = 16) or 0xFF000000L)

@@ -432,3 +432,62 @@ opens instantly, so the animation never covers real work. On Android that
 delay would be a `keepOnScreenCondition` lying about loading, and the platform
 is explicit that a splash should last as long as the first frame takes and no
 longer. Zaka's first frame is a Room query against a local file.
+
+### ZXing encodes Code 128 and QR; EAN-13 stays hand-written
+
+[#8](../../issues/8)
+
+The same division the iOS app makes with Core Image: use the library for what
+it has, write what it lacks. Core Image generates Code 128 and QR and not
+EAN-13, which is what most retail loyalty cards use — so iOS hand-wrote that
+one. Android has no built-in generator at all, and ZXing has all three, but
+`Ean13` is already written, already tested against an independent decoder, and
+already the thing a till has to read correctly. Replacing it with a library
+call would retire a tested implementation for a dependency's word.
+
+ZXing lives in `:core`, not `:app`. It is plain Java with no transitive
+dependencies, and a barcode's module pattern is arithmetic: putting it in the
+pure module means `CodeMatrix` is tested with a JDK, including the QR finder
+patterns, rather than needing a device.
+
+Two details taken from ZXing rather than its convenience API.
+`Code128Writer.encode(String)` returns the raw modules instead of a scaled
+`BitMatrix`, and the QR comes from `Encoder.encode` so the grid is exactly one
+module per cell. Both avoid a library-chosen pixel size that the view would
+then have to undo.
+
+QR encodes as UTF-8 explicitly. On iOS, leaving it to the default silently
+produced no image for a card number containing a non-ASCII character.
+
+### A code is always dark on light, never themed
+
+`CodeImage` draws black on white whatever the app's colour scheme is. A
+scanner expects dark bars on a light background; inverting a barcode for dark
+mode would produce something that looks right to a person and is unreadable to
+a till.
+
+Module edges are also snapped to whole pixels. Drawn on fractional boundaries
+they get anti-aliased, and a soft edge is exactly the blur that makes a scaled
+bitmap barcode scan badly — the thing the vector rendering exists to avoid.
+
+Quiet zones are part of the code, not padding: ten modules for the linear
+symbologies and four for QR, carried on `BarcodeSymbology` so the renderer
+cannot forget them. A scanner reads the quiet zone as the start of the code and
+refuses one that runs to the edge of the screen.
+
+### The barcode type follows the number until somebody chooses
+
+Typing thirteen valid digits switches the type to EAN-13; anything else reads
+as Code 128. The moment the user picks a type by hand, that stops: a form that
+keeps changing a field under you as you type is worse than one that guesses
+wrong once.
+
+Loading a saved card counts as chosen. A card already stored as Code 128 was a
+decision somebody made, and re-typing the same digits must not promote it.
+
+### Brightness is borrowed, not taken
+
+Showing a card sets the window to full brightness and keeps the screen awake,
+because till scanners struggle with a dim display and a counter is exactly
+where the screen would otherwise sleep. Both are restored when the card
+closes, so the phone's own settings are untouched afterwards.
