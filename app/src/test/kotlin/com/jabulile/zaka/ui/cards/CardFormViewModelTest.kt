@@ -178,8 +178,12 @@ class CardFormViewModelTest {
         form.state.filter { it.loaded }.first()
         form.delete()
 
+        // Same reason as the expense form: delete() returns at the first
+        // suspension, so the row is only certainly gone once the form says
+        // it has finished.
+        form.state.filter { it.finished }.first()
+
         assertNull(cards.find(id))
-        assertTrue(form.state.value.finished)
     }
 
     @Test
